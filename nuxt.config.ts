@@ -5,7 +5,6 @@ export default defineNuxtConfig({
     compatibilityDate: '2025-05-15',
     devtools: {enabled: true},
     css: ['~/assets/css/tailwind.css'],
-
     vite: {
         plugins: [
             tailwindcss(),
@@ -13,6 +12,9 @@ export default defineNuxtConfig({
     },
 
     modules: ['shadcn-nuxt'],
+    css: [
+        '~/assets/css/style.css'
+    ],
     shadcn: {
         /**
          * Prefix for all the imported component
@@ -23,5 +25,6 @@ export default defineNuxtConfig({
          * @default "./components/ui"
          */
         componentDir: './components/ui'
-    }
+    },
+
 })

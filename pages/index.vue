@@ -1,5 +1,5 @@
 <template>
-  <div class="flex">
+  <div id="main">
     <!-- 사이드바 -->
     <nav class="sidebar">
       <div class="logo">그룹웨어</div>

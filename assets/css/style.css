@@ -1,0 +1,527 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#main {
+    font-family: "Nanum Gothic", sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+ul {
+    list-style: none;
+}
+
+/* 사이드바 */
+.sidebar {
+    width: 240px;
+    background-color: #004d99;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+.sidebar .logo {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.sidebar ul li {
+    padding: 12px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.sidebar ul li:hover,
+.sidebar ul li.active {
+    background-color: #003366;
+}
+
+.sidebar ul li .icon {
+    width: 20px;
+    margin-right: 10px;
+    /* 실제 아이콘을 넣으실 땐 <img> 혹은 font-icon 을 활용하세요 */
+    text-align: center;
+}
+
+/* 메인 컨테이너 */
+.main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    background-color: #fafafa;
+}
+
+/* 헤더 */
+.header {
+    height: 60px;
+    background-color: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.header .breadcrumb {
+    font-size: 1rem;
+    color: #555;
+}
+
+.header .user-info {
+    display: flex;
+    align-items: center;
+}
+
+.header .user-info img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: 10px;
+}
+
+/* 콘텐츠 영역 */
+.content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.grid {
+    display: grid;
+    gap: 20px;
+}
+
+/* 좌측 상단 전자결재 카드 */
+.card-approval-summary {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+}
+
+.card-approval-summary h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.approval-stats {
+    display: flex;
+    justify-content: space-between;
+}
+
+.approval-stats .stat {
+    text-align: center;
+}
+
+.approval-stats .stat .number {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #007acc;
+}
+
+.approval-stats .stat .label {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 4px;
+}
+
+/* TO-DO 원형 그래프 카드 (정적 원형 차트 모양) */
+.card-todo {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    text-align: center;
+}
+
+.card-todo h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.circle-chart {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+}
+
+.circle-chart svg {
+    transform: rotate(-90deg);
+    width: 120px;
+    height: 120px;
+}
+
+.circle-chart circle {
+    fill: none;
+    stroke-width: 10;
+    r: 50;
+    cx: 60;
+    cy: 60;
+}
+
+.circle-chart .bg {
+    stroke: #eee;
+}
+
+.circle-chart .progress {
+    stroke: #28a745;
+    stroke-dasharray: 314; /* 2πr = 314 */
+    stroke-dashoffset: calc(314 * (1 - 84 / 100)); /* 84% 차트 */
+    transition: stroke-dashoffset 0.5s;
+}
+
+.circle-chart .percent-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #28a745;
+}
+
+/* 알림 카드 */
+.card-alerts {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+}
+
+.card-alerts h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.alert-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.alert-item .dot {
+    width: 8px;
+    height: 8px;
+    background-color: #dc3545;
+    border-radius: 50%;
+    margin-right: 8px;
+    margin-top: 5px;
+}
+
+.alert-item .text {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.3;
+}
+
+/* 근태정보 카드 (디지털 시계) */
+.card-clock {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    position: relative;
+}
+
+.card-clock h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.clock-display {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.btn-attendance {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-attendance button {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007acc;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-attendance button:hover {
+    background-color: #005fa3;
+}
+
+.small-text {
+    font-size: 0.85rem;
+    color: #777;
+    text-align: center;
+}
+
+/* 뉴스피드 카드 */
+.card-newsfeed {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+}
+
+.card-newsfeed h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.news-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.news-tabs div {
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.news-tabs .active {
+    background-color: #007acc;
+    color: #fff;
+}
+
+.news-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.news-item {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+
+.news-item:last-child {
+    border-bottom: none;
+}
+
+.news-item .title {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.news-item .meta {
+    font-size: 0.85rem;
+    color: #777;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.news-item .meta .icon {
+    font-size: 1rem;
+    color: #007acc;
+}
+
+/* 날씨 카드 */
+.card-weather {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    text-align: center;
+}
+
+.card-weather h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.weather-info {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.weather-sub {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 4px;
+}
+
+/* 게시판 카드 */
+.card-board {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+}
+
+.card-board h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.board-list {
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.board-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.board-item:last-child {
+    border-bottom: none;
+}
+
+.board-item .title {
+    font-size: 0.95rem;
+    color: #007acc;
+    cursor: pointer;
+}
+
+.board-item .date {
+    font-size: 0.85rem;
+    color: #777;
+}
+
+/* 친구(아바타) 카드 */
+.card-friends {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+}
+
+.card-friends h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.friends-list {
+    display: flex;
+    gap: 12px;
+}
+
+.friend {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.friend img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 6px;
+    border: 2px solid #007acc;
+}
+
+/* 캘린더 카드 */
+.card-calendar {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+}
+
+.card-calendar h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.calendar {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.calendar th,
+.calendar td {
+    width: 14.28%;
+    padding: 6px 0;
+    font-size: 0.9rem;
+    border: 1px solid #eee;
+}
+
+.calendar th {
+    background-color: #f1f1f1;
+}
+
+.calendar .today {
+    background-color: #007acc;
+    color: #fff;
+    border-radius: 50%;
+}
+
+/* 그리드 배치 */
+.layout-grid {
+    /* 총 3열 + 2열의 사이드바 공간 확보 (사이드바는 fixed) */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: minmax(120px, auto);
+    gap: 20px;
+}
+
+/* 반응형 예시 (너비가 좁아지면 2열 또는 1열로 변경) */
+@media (max-width: 1200px) {
+    .layout-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 800px) {
+    .sidebar {
+        display: none;
+    }
+
+    body {
+        flex-direction: column;
+    }
+
+    .header {
+        justify-content: space-between;
+    }
+
+    .layout-grid {
+        grid-template-columns: 1fr;
+    }
+}
