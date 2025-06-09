@@ -239,9 +239,6 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, onMounted} from 'vue'
-import {useRouter} from 'vue-router'
-import {Card, CardContent, Button} from 'shadcn-nuxt'
 
 // 사이드바 메뉴
 const router = useRouter()
