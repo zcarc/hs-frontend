@@ -1,31 +1,6 @@
 <template>
-  <div id="main">
-    <!-- 사이드바 -->
-    <nav class="sidebar">
-      <div class="logo">그룹웨어</div>
-      <ul class="menu">
-        <li
-            v-for="item in menuItems"
-            :key="item.key"
-            :class="{ active: activeMenu === item.key }"
-            @click="selectMenu(item.key)"
-        >
-          <span class="icon">{{ item.icon }}</span>{{ item.name }}
-        </li>
-      </ul>
-    </nav>
-
     <!-- 메인 컨테이너 -->
     <div class="main-container">
-      <!-- 헤더 -->
-      <header class="header">
-        <div class="breadcrumb">Home &gt; 대시보드</div>
-        <div class="user-info">
-          <span>홍길동님</span>
-          <img src="https://via.placeholder.com/32" alt="User Avatar"/>
-        </div>
-      </header>
-
       <!-- 콘텐츠 -->
       <div class="content">
         <div class="layout-grid">
@@ -235,28 +210,9 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
-
-// 사이드바 메뉴
-const router = useRouter()
-const menuItems = [
-  {key: 'mail', name: '메일', icon: '📧'},
-  {key: 'msg', name: '쪽지', icon: '💬'},
-  {key: 'approval', name: '전자결재', icon: '📝'},
-  {key: 'manage', name: '결재 관리', icon: '📋'},
-  {key: 'report', name: '보고', icon: '📊'},
-  {key: 'settings', name: '설정', icon: '⚙️'}
-]
-const activeMenu = ref('')
-
-// 메뉴 선택 함수
-function selectMenu(key: string) {
-  activeMenu.value = key
-  if (key === 'approval') router.push('/approval')
-}
 
 // 전자결재 통계
 const approvalStats = [
@@ -335,3 +291,5 @@ const friends = [
   {name: '박민수', avatar: 'https://via.placeholder.com/40'}
 ]
 </script>
+<style scoped src="./index.css">
+</style>

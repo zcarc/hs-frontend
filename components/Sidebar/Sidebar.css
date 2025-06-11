@@ -1,0 +1,40 @@
+.sidebar {
+    width: 240px;
+    background-color: #004d99;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+.sidebar .logo {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.sidebar ul li {
+    padding: 12px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.sidebar ul li:hover,
+.sidebar ul li.active {
+    background-color: #003366;
+}
+
+.sidebar ul li .icon {
+    width: 20px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+/*@media (max-width: 800px) {*/
+/*    .sidebar {*/
+/*        display: none;*/
+/*    }*/
+/*}*/

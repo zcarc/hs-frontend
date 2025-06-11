@@ -11,10 +11,7 @@ export default defineNuxtConfig({
         ],
     },
 
-    modules: ['shadcn-nuxt'],
-    css: [
-        '~/assets/css/style.css'
-    ],
+    modules: ['shadcn-nuxt', '@pinia/nuxt',],
     shadcn: {
         /**
          * Prefix for all the imported component
@@ -22,7 +19,7 @@ export default defineNuxtConfig({
         prefix: '',
         /**
          * Directory that the component lives in.
-         * @default "./components/ui"
+         * @default "./components/ui"((
          */
         componentDir: './components/ui'
     },
