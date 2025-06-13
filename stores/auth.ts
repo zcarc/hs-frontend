@@ -1,26 +1,11 @@
 import { defineStore } from "pinia";
-
-interface UserState {
-  userId: string;
-  name: string;
-}
-
-interface LoginPayload {
-  userId: string;
-  password: string;
-}
-
-interface LoginResponse {
-  userId: string;
-  name: string;
-  accessToken: string;
-}
+import type { LoginPayload, LoginResponse, UserState } from "~/stores/types";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null as null | UserState,
-    isLoggedIn: false,
-    accessToken: "",
+    accessToken: null as string | null,
+    isLoading: true,
   }),
   actions: {
     async login({ userId, password }: LoginPayload) {
@@ -33,7 +18,8 @@ export const useAuthStore = defineStore("auth", {
         },
       );
       this.user = { userId: res.userId, name: res.name };
-      this.isLoggedIn = true;
+      this.accessToken = res.accessToken;
+      this.isLoading = false;
     },
     async logout() {
       if (this.user?.userId) {
@@ -45,13 +31,18 @@ export const useAuthStore = defineStore("auth", {
           console.error("로그아웃 요청 실패: ", e);
         });
         this.user = null;
-        this.isLoggedIn = false;
-        this.accessToken = "";
+        this.accessToken = null;
+        this.isLoading = false;
 
         navigateTo("/");
       } else {
         alert("로그아웃 시도 중 오류가 발생했습니다.");
       }
+    },
+    getAccessTokenHeader() {
+      return this.accessToken
+        ? { Authorization: `Bearer ${this.accessToken}` }
+        : null;
     },
   },
 });

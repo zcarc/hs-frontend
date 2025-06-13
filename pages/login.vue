@@ -1,7 +1,7 @@
 <template>
   <form
     @submit.prevent="onSubmit"
-    class="w-[1000px] mx-auto p-6 bg-white space-y-4"
+    class="w-full max-w-[1000px] mx-auto p-6 bg-white space-y-4"
   >
     <h2
       class="text-xl font-semibold mb-4 text-center border-t-2 border-solid border-black pt-2 pb-1 border-b-1"
