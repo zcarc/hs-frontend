@@ -1,8 +1,8 @@
 <template>
   <header class="header">
-    <template v-if="!auth.isLoading">
-      <div class="breadcrumb">Home &gt; 대시보드</div>
-      <div class="user-info">
+    <div class="breadcrumb">Home &gt; 대시보드</div>
+    <div class="user-info">
+      <ClientOnly>
         <template v-if="auth.user">
           <div class="auth-login-text">
             <span>{{ auth.user.name }}님</span>
@@ -15,8 +15,8 @@
             <NuxtLink to="/signup">회원가입</NuxtLink>
           </div>
         </template>
-      </div>
-    </template>
+      </ClientOnly>
+    </div>
   </header>
 </template>
 
@@ -24,6 +24,8 @@
 import { useAuthStore } from "~/stores/auth";
 
 const auth = useAuthStore();
+
+await auth.me();
 </script>
 
 <style scoped src="./Header.css" />

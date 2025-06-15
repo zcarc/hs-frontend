@@ -82,13 +82,14 @@ const onSubmit = handleSubmit(async (values) => {
     await router.push("/");
   } catch (err: any) {
     const status = err.response?.status;
+    const message = err.response?._data?.message
 
     if (status === 404) {
       errorMessage.value = "페이지를 찾을 수 없습니다. (404)";
     } else if (status === 500) {
       errorMessage.value = "서버 오류가 발생했습니다. (500)";
-    } else if (err.response?.data?.message) {
-      errorMessage.value = err.response.data.message;
+    } else if (message) {
+      errorMessage.value = message;
     } else {
       errorMessage.value = "로그인에 실패했습니다";
     }

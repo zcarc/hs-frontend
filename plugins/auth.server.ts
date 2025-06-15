@@ -1,43 +1,27 @@
-import type { MeResponse } from "~/stores/types";
-
-export default defineNuxtPlugin(async (nuxtApp) => {
-  const auth = useAuthStore();
-  const url = nuxtApp.ssrContext?.event.node.req.url || "no-url";
-
-  console.log("[SSR plugin] Called at:", new Date().toISOString(), "URL:", url);
-
-  if (auth.user) {
-    auth.isLoading = false;
-    return;
-  }
-
-  console.log("meta.server...: ", import.meta.server);
-  const headers = useRequestHeaders(["cookie"]);
-
-  console.log("headers:", headers);
-
-  const cookie = headers.cookie;
-  if (!cookie) {
-    return;
-  }
-
-  const hasRefreshCookie = cookie.includes("refreshToken");
-  if (auth.accessToken && hasRefreshCookie) {
-    try {
-      const res = await $fetch<MeResponse>("http://localhost:8000/auth/me", {
-        method: "GET",
-        headers: {
-          cookie,
-        },
-      });
-      auth.user = { userId: res.userId, name: res.name };
-      auth.accessToken = res.accessToken;
-      auth.isLoading = false;
-    } catch (e) {
-      console.log("SSR - me 요청 실패: ", e);
-      auth.user = null;
-      auth.accessToken = null;
-      auth.isLoading = false;
-    }
-  }
-});
+// import type { MeResponse } from "~/stores/types";
+//
+// export default defineNuxtPlugin(async (nuxtApp) => {
+//   const auth = useAuthStore();
+//   const user = nuxtApp.ssrContext?.event.context.user;
+//
+//   if (user) {
+//     auth.user = user;
+//     auth.isLoading = false;
+//     return;
+//   }
+//
+//   const cookie = useRequestHeaders(["cookie"]).cookie;
+//
+//   if (cookie?.includes("accessToken")) {
+//     try {
+//       const me = await $fetch<MeResponse>("http://localhost:8000/auth/me", {
+//         method: "POST",
+//         headers: { cookie },
+//         credentials: "include",
+//       });
+//       auth.user = { userId: me.userId, name: me.name };
+//     } catch (e) {
+//       console.error("auth.server.ts me 호출 실패:", e);
+//     }
+//   }
+// });

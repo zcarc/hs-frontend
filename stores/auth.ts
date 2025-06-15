@@ -1,10 +1,16 @@
+import consola from "consola";
 import { defineStore } from "pinia";
-import type { LoginPayload, LoginResponse, UserState } from "~/stores/types";
+import type {
+  LoginPayload,
+  LoginResponse,
+  MeResponse,
+  UserState,
+} from "~/stores/types";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null as null | UserState,
-    accessToken: null as string | null,
+    accessToken: "" as string | null,
     isLoading: true,
   }),
   actions: {
@@ -39,10 +45,74 @@ export const useAuthStore = defineStore("auth", {
         alert("로그아웃 시도 중 오류가 발생했습니다.");
       }
     },
-    getAccessTokenHeader() {
-      return this.accessToken
-        ? { Authorization: `Bearer ${this.accessToken}` }
-        : null;
+    // getAccessTokenHeader() {
+    //   return this.accessToken
+    //     ? { Authorization: `Bearer ${this.accessToken}` }
+    //     : null;
+    // },
+
+    async tryRefresh() {
+      try {
+        const res = await $fetch<MeResponse>(
+          "http://localhost:8000/auth/refresh",
+          {
+            method: "POST",
+            credentials: "include",
+          },
+        );
+        this.user = { userId: res.userId, name: res.name };
+      } catch (e: any) {
+        console.error("refresh 실패: ", e);
+        this.user = null;
+      } finally {
+        this.isLoading = false;
+      }
     },
+
+    async me() {
+      try {
+        const res = await $fetch<MeResponse>("http://localhost:8000/auth/me", {
+          method: "POST",
+          credentials: "include",
+        });
+
+        this.user = { userId: res.userId, name: res.name };
+      } catch (e: any) {
+        console.log("me 요청 실패 e: ", e);
+        const responseData = e.response?._data;
+        const code = responseData?.code;
+        const message = responseData?.message;
+        console.log("code: ", code); // 'UNAUTHORIZED_ACCESS_TOKEN'
+        console.log("message: ", message); // '액세스 토큰 유효성 검증 실패'
+        if (
+          code === "NOT_FOUND_ACCESS_TOKEN" ||
+          code === "UNAUTHORIZED_ACCESS_TOKEN"
+        ) {
+          await this.tryRefresh();
+        }
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    // async refreshToken() {
+    //   try {
+    //     const res = await $fetch<MeResponse>(
+    //       "http://localhost:8000/auth/refresh",
+    //       {
+    //         method: "POST",
+    //         credentials: "include",
+    //       },
+    //     );
+    //
+    //     this.user = { userId: res.userId, name: res.name };
+    //   } catch (e) {
+    //     console.log("refresh 실패, 로그인 유지 안됨 e: ", e);
+    //     this.user = null;
+    //     this.accessToken = null;
+    //   } finally {
+    //     this.isLoading = false;
+    //   }
+    // },
   },
 });

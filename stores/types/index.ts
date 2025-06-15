@@ -14,7 +14,7 @@ export interface LoginResponse {
   accessToken: string;
 }
 
-export interface MeResponse {
+export interface MeResponse extends Response {
   userId: string;
   name: string;
   accessToken: string;
