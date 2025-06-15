@@ -100,9 +100,6 @@ export const useAuthStore = defineStore("auth", {
         ) {
           const refreshSuccess = await this.tryRefresh(cookie);
           console.log("refreshSuccess: ", refreshSuccess);
-          if (!refreshSuccess) {
-            this.user = null;
-          }
         }
       } finally {
         this.isLoading = false;
