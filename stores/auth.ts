@@ -51,29 +51,39 @@ export const useAuthStore = defineStore("auth", {
     //     : null;
     // },
 
-    async tryRefresh() {
+    async tryRefresh(cookie: string) {
+      console.log("tryRefresh... ");
       try {
         const res = await $fetch<MeResponse>(
           "http://localhost:8000/auth/refresh",
           {
             method: "POST",
             credentials: "include",
+            headers: { cookie },
           },
         );
+        console.log("tryRefresh...  res: ", res);
         this.user = { userId: res.userId, name: res.name };
+        return true;
       } catch (e: any) {
         console.error("refresh 실패: ", e);
         this.user = null;
+        return false;
       } finally {
         this.isLoading = false;
       }
     },
 
-    async me() {
+    async me(cookie: string) {
+      console.log("me... isLoading: ", this.isLoading);
+
+      this.isLoading = true;
+
       try {
         const res = await $fetch<MeResponse>("http://localhost:8000/auth/me", {
           method: "POST",
           credentials: "include",
+          headers: { cookie },
         });
 
         this.user = { userId: res.userId, name: res.name };
@@ -88,7 +98,11 @@ export const useAuthStore = defineStore("auth", {
           code === "NOT_FOUND_ACCESS_TOKEN" ||
           code === "UNAUTHORIZED_ACCESS_TOKEN"
         ) {
-          await this.tryRefresh();
+          const refreshSuccess = await this.tryRefresh(cookie);
+          console.log("refreshSuccess: ", refreshSuccess);
+          if (!refreshSuccess) {
+            this.user = null;
+          }
         }
       } finally {
         this.isLoading = false;
