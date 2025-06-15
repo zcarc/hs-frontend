@@ -1,0 +1,70 @@
+/* board 페이지와 통일되는 스타일 */
+.board-container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 900px;
+    margin: 30px auto 0 auto;
+    padding: 32px 24px;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+.board-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 18px;
+}
+.board-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.form-label {
+    font-size: 1.02rem;
+    color: #444;
+    margin-bottom: 3px;
+}
+.form-input {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 1rem;
+}
+.form-input:focus {
+    outline: none;
+    border-color: #007acc;
+    background: #f7fafd;
+}
+.btn-submit {
+    width: 100%;
+    background: #007acc;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 32px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.btn-submit:hover {
+    background: #005f99;
+}
+@media (max-width: 700px) {
+    .board-container {
+        padding: 12px 4px;
+    }
+    .btn-submit {
+        width: 100%;
+        font-size: 1rem;
+        padding: 10px 0;
+    }
+}

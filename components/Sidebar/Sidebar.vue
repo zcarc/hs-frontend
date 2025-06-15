@@ -3,34 +3,35 @@
     <div class="logo">그룹웨어</div>
     <ul class="menu">
       <li
-          v-for="item in menuItems"
-          :key="item.key"
-          :class="{ active: activeMenu === item.key }"
-          @click="selectMenu(item.key)"
+        v-for="item in menuItems"
+        :key="item.key"
+        :class="{ active: isActive(item) }"
       >
-        <span class="icon">{{ item.icon }}</span>{{ item.name }}
+        <NuxtLink :to="item.link" class="menu-link" exact-active-class="active">
+          <span class="icon">{{ item.icon }}</span
+          >{{ item.name }}
+        </NuxtLink>
       </li>
     </ul>
   </nav>
 </template>
 
 <script setup lang="ts">
-const router = useRouter()
+const route = useRoute();
 
 const menuItems = [
-  { key: 'mail', name: '메일', icon: '📧' },
-  { key: 'msg', name: '쪽지', icon: '💬' },
-  { key: 'approval', name: '전자결재', icon: '📝' },
-  { key: 'manage', name: '결재 관리', icon: '📋' },
-  { key: 'report', name: '보고', icon: '📊' },
-  { key: 'settings', name: '설정', icon: '⚙️' },
-]
+  { key: "board", name: "게시판", icon: "", link: "/board" },
+  { key: "mail", name: "메일", icon: "📧", link: "/mail" },
+  { key: "msg", name: "쪽지", icon: "💬", link: "/msg" },
+  { key: "approval", name: "전자결재", icon: "📝", link: "/approval" },
+  { key: "manage", name: "결재 관리", icon: "📋", link: "/manage" },
+  { key: "report", name: "보고", icon: "📊", link: "/report" },
+  { key: "settings", name: "설정", icon: "⚙️", link: "/settings" },
+];
 
-const activeMenu = ref('')
-
-function selectMenu(key: string) {
-  activeMenu.value = key
-  if (key === 'approval') router.push('/approval')
+function isActive(item: (typeof menuItems)[0]) {
+  // 현재 경로가 item.link 로 시작하면 active
+  return route.path.startsWith(item.link);
 }
 </script>
 
