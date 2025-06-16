@@ -13,25 +13,6 @@
           required
         />
       </div>
-      <!--      <div class="form-row">-->
-      <!--        <label class="form-label" for="author">작성자</label>-->
-      <!--        <input-->
-      <!--          id="author"-->
-      <!--          v-model="author"-->
-      <!--          type="text"-->
-      <!--          class="form-input"-->
-      <!--          placeholder="작성자를 입력하세요"-->
-      <!--          required-->
-      <!--        />-->
-      <!--      </div>-->
-      <!--      <div class="form-row">-->
-      <!--        <label class="form-label" for="category">카테고리</label>-->
-      <!--        <select id="category" v-model="category" class="form-input">-->
-      <!--          <option value="공지">공지</option>-->
-      <!--          <option value="업무">업무</option>-->
-      <!--          <option value="자유">자유</option>-->
-      <!--        </select>-->
-      <!--      </div>-->
       <div class="form-row">
         <label class="form-label" for="content">내용</label>
         <textarea
@@ -50,21 +31,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-
 const title = ref("");
-const author = ref("");
-const category = ref("공지");
 const content = ref("");
 const router = useRouter();
 
-const auth = useAuthStore(); // 2. pinia에서 user 상태 가져오기
+const auth = useAuthStore();
 
 async function submit() {
-  // alert(
-  //   `[임시] 등록됨\n제목: ${title.value}\n작성자: ${author.value}\n카테고리: ${category.value}\n내용: ${content.value}`,
-  // );
   if (!auth.user?.userId) {
     alert("로그인이 필요합니다.");
     return;
@@ -78,13 +51,16 @@ async function submit() {
         content: content.value,
         userId: auth.user.userId,
       },
-      // credentials: "include", // 백엔드가 인증 필요하면 추가
     });
     await router.push("/board");
   } catch (e: any) {
     alert("등록 실패: " + (e?.data?.message || e.message));
   }
 }
+
+definePageMeta({
+  middleware: "auth-guard",
+});
 </script>
 
 <style scoped src="./index.css"></style>

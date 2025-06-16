@@ -1,4 +1,3 @@
-import consola from "consola";
 import { defineStore } from "pinia";
 import type {
   LoginPayload,
@@ -51,7 +50,7 @@ export const useAuthStore = defineStore("auth", {
     //     : null;
     // },
 
-    async tryRefresh(cookie: string) {
+    async tryRefresh(cookie: string): Promise<boolean> {
       console.log("tryRefresh... ");
       try {
         const res = await $fetch<MeResponse>(
@@ -74,7 +73,7 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async me(cookie: string) {
+    async me(cookie: string): Promise<boolean> {
       console.log("me... isLoading: ", this.isLoading);
 
       this.isLoading = true;
@@ -87,6 +86,7 @@ export const useAuthStore = defineStore("auth", {
         });
 
         this.user = { userId: res.userId, name: res.name };
+        return true;
       } catch (e: any) {
         console.log("me 요청 실패 e: ", e);
         const responseData = e.response?._data;
@@ -98,8 +98,9 @@ export const useAuthStore = defineStore("auth", {
           code === "NOT_FOUND_ACCESS_TOKEN" ||
           code === "UNAUTHORIZED_ACCESS_TOKEN"
         ) {
-          const refreshSuccess = await this.tryRefresh(cookie);
-          console.log("refreshSuccess: ", refreshSuccess);
+          return await this.tryRefresh(cookie);
+        } else {
+          return false;
         }
       } finally {
         this.isLoading = false;

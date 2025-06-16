@@ -7,7 +7,7 @@
         :key="item.key"
         :class="{ active: isActive(item) }"
       >
-        <NuxtLink :to="item.link" class="menu-link" exact-active-class="active">
+        <NuxtLink :to="item.link" class="menu-link">
           <span class="icon">{{ item.icon }}</span
           >{{ item.name }}
         </NuxtLink>

@@ -68,9 +68,6 @@
     text-align: center;
 }
 .col-title {
-    font-weight: 500;
-    color: #007acc;
-    cursor: pointer;
     padding-left: 6px;
 }
 .col-title:hover {

@@ -43,6 +43,12 @@
     border-color: #007acc;
     background: #f7fafd;
 }
+input.form-input:focus:read-only,
+textarea.form-input:focus:read-only {
+    border-color: #ddd;
+    background: #fff;
+    box-shadow: none;
+}
 .btn-submit {
     width: 100%;
     background: #007acc;
@@ -58,6 +64,9 @@
 .btn-submit:hover {
     background: #005f99;
 }
+
+
+
 @media (max-width: 700px) {
     .board-container {
         padding: 12px 4px;
