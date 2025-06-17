@@ -51,6 +51,7 @@ async function submit() {
         content: content.value,
         userId: auth.user.userId,
       },
+      credentials: "include",
     });
     await router.push("/board");
   } catch (e: any) {
