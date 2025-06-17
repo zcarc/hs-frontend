@@ -9,9 +9,9 @@
         class="board-search"
       />
       <template v-if="auth.user">
-        <Button>
-          <NuxtLink to="/board/create"> 글쓰기</NuxtLink>
-        </Button>
+        <NuxtLink to="/board/create">
+          <Button>글쓰기</Button>
+        </NuxtLink>
       </template>
     </div>
     <div class="board-list-header">

@@ -13,7 +13,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       return navigateTo("/");
     }
   } else if (import.meta.client) {
-    const success = await auth.me("");
+    const success = await auth.me();
     console.log("client success: ", success);
     if (!success) {
       return navigateTo("/");

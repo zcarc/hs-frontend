@@ -1,6 +1,8 @@
 <template>
   <nav class="sidebar">
-    <div class="logo">그룹웨어</div>
+    <NuxtLink to="/">
+      <div class="logo">그룹웨어</div>
+    </NuxtLink>
     <ul class="menu">
       <li
         v-for="item in menuItems"

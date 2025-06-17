@@ -50,7 +50,7 @@ export const useAuthStore = defineStore("auth", {
     //     : null;
     // },
 
-    async tryRefresh(cookie: string): Promise<boolean> {
+    async tryRefresh(cookie: string = ""): Promise<boolean> {
       console.log("tryRefresh... ");
       try {
         const res = await $fetch<MeResponse>(
@@ -73,7 +73,7 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async me(cookie: string): Promise<boolean> {
+    async me(cookie: string = ""): Promise<boolean> {
       console.log("me... isLoading: ", this.isLoading);
 
       this.isLoading = true;
