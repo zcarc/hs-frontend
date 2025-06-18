@@ -9,7 +9,14 @@
         :key="item.key"
         :class="{ active: isActive(item) }"
       >
-        <NuxtLink :to="item.link" class="menu-link">
+        <NuxtLink
+          :to="
+            item.link === '/board'
+              ? { path: item.link, query: { page: 1 } }
+              : item.link
+          "
+          class="menu-link"
+        >
           <span class="icon">{{ item.icon }}</span
           >{{ item.name }}
         </NuxtLink>
@@ -38,3 +45,4 @@ function isActive(item: (typeof menuItems)[0]) {
 </script>
 
 <style scoped src="./Sidebar.css" />
+,

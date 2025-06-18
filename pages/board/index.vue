@@ -19,30 +19,81 @@
       <span class="col-title">제목</span>
       <span class="col-author">작성자</span>
     </div>
-    <template v-if="isLoading === false">
-      <div v-if="posts.length > 0" class="board-list">
-        <div v-for="post in posts" :key="post.id" class="board-list-row">
-          <span class="col-no">{{ post.id }}</span>
-          <NuxtLink :to="`/board/${post.id}`">
-            <span class="col-title cursor-pointer">{{ post.title }}</span>
-          </NuxtLink>
-          <span class="col-author">{{ post.author.name }}</span>
-        </div>
+    <div v-if="posts.length > 0" class="board-list">
+      <div v-for="(post, index) in posts" :key="post.id" class="board-list-row">
+        <span class="col-no"> {{ no - index }}</span>
+        <NuxtLink :to="`/board/${post.id}`">
+          <span class="col-title cursor-pointer">{{ post.title }}</span>
+        </NuxtLink>
+        <span class="col-author">{{ post.author.name }}</span>
       </div>
-      <div v-else class="board-empty">게시글이 없습니다.</div>
-    </template>
+    </div>
+    <div v-else class="board-empty">게시글이 없습니다.</div>
+    <Pagination class="mt-10" :limit="meta.limit" :total="meta.total" />
   </div>
 </template>
 
 <script setup lang="ts">
-import type { GetPost } from "~/types/post";
+import type { GetPostData, Post } from "~/types/post";
 
 const auth = useAuthStore();
 
-const { data: posts, pending: isLoading } = await useAsyncData<GetPost[]>(
-  "posts",
-  () => $fetch("http://localhost:8000/post"),
+const posts = ref<Post[]>([]);
+const meta = ref({
+  total: 0,
+  page: 1,
+  limit: 10,
+});
+
+const route = useRoute();
+const page = computed(() => Number(route.query.page) || 1);
+
+const no = computed(
+  () => meta.value.total - (page.value - 1) * meta.value.limit
 );
+
+const res = await getPosts(page.value);
+console.log("res: ", res);
+
+if (res) {
+  posts.value = res.posts;
+  meta.value = res.meta;
+}
+
+async function getPosts(page: number = 1, limit: number = 10) {
+  try {
+    return await $fetch<GetPostData>("http://localhost:8000/post", {
+      params: {
+        page,
+        limit,
+      },
+    });
+  } catch (e) {
+    alert("게시글 요청 실패");
+  }
+}
+
+watchEffect(async () => {
+  const res = await getPosts(page.value, meta.value.limit);
+  if (res) {
+    posts.value = res.posts;
+    // 아래처럼 프로퍼티만 각각 갱신
+    meta.value.total = res.meta.total;
+    meta.value.page = res.meta.page;
+    meta.value.limit = res.meta.limit;
+  }
+});
+
+// const { data, pending: isLoading } = await useAsyncData<GetPostData>(
+//   "posts",
+//   () =>
+//     $fetch("http://localhost:8000/post", {
+//       params: {
+//         page: meta.value.page,
+//         limit: meta.value.limit,
+//       },
+//     })
+// );
 
 const search = ref("");
 </script>

@@ -17,8 +17,11 @@
           ></textarea>
         </div>
         <div class="board-toolbar">
-          <NuxtLink to="/board" class="btn-submit" style="text-align: center"
-            >목록으로
+          <NuxtLink :to="`/board/edit/${post.id}`">
+            <button class="btn-submit">수정하기</button>
+          </NuxtLink>
+          <NuxtLink to="/board">
+            <button class="btn-submit">목록으로</button>
           </NuxtLink>
         </div>
       </form>
@@ -29,10 +32,10 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
-import type { GetPost } from "~/types/post";
+import type { Post } from "~/types/post";
 
 const route = useRoute();
-const post = ref<GetPost | null>(null);
+const post = ref<Post | null>(null);
 
 onMounted(async () => {
   try {

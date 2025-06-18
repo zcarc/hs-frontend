@@ -1,9 +1,6 @@
 import { useAuthStore } from "~/stores/auth";
 
-export async function useAuthApi<T>(
-  requestUrl: string,
-  options: RequestOptions = {},
-): Promise<T> {
+export async function useAuthApi<T>(requestUrl: string, options: {}) {
   const auth = useAuthStore();
 
   try {
@@ -25,12 +22,4 @@ export async function useAuthApi<T>(
     }
     return false;
   }
-}
-
-interface RequestOptions {
-  method: string;
-  credentials: string;
-  headers: {
-    [key: string]: string;
-  };
 }
