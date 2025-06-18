@@ -16,9 +16,9 @@ export async function useAuthApi<T>(requestUrl: string, options: {}) {
       errorCode === "NOT_FOUND_ACCESS_TOKEN"
     ) {
       await auth.tryRefresh();
-      alert("게시글 작성에 실패했습니다.");
+      alert("요청에 실패했습니다.");
     } else {
-      alert("게시글 작성 중 오류가 발생했습니다.");
+      alert("요청 중 오류가 발생했습니다.");
     }
     return false;
   }

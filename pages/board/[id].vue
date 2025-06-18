@@ -20,6 +20,7 @@
           <NuxtLink :to="`/board/edit/${post.id}`">
             <button class="btn-submit">수정하기</button>
           </NuxtLink>
+          <button class="btn-submit" @click="remove">삭제하기</button>
           <NuxtLink to="/board">
             <button class="btn-submit">목록으로</button>
           </NuxtLink>
@@ -33,13 +34,26 @@
 import { useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
 import type { Post } from "~/types/post";
+import { useAuthApi } from "~/composable/useAuthApi";
 
 const route = useRoute();
+const router = useRouter();
+
+const id = route.params.id;
 const post = ref<Post | null>(null);
+
+async function remove() {
+  const result = await useAuthApi(`http://localhost:8000/post/${id}`, {
+    method: "DELETE",
+  });
+  if (result) {
+    await router.push("/board");
+  }
+}
 
 onMounted(async () => {
   try {
-    post.value = await $fetch(`http://localhost:8000/post/${route.params.id}`);
+    post.value = await $fetch(`http://localhost:8000/post/${id}`);
   } catch (e) {
     post.value = null;
   }
