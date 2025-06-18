@@ -29,7 +29,7 @@
       </div>
     </div>
     <div v-else class="board-empty">게시글이 없습니다.</div>
-    <Pagination class="mt-10" :limit="meta.limit" :total="meta.total" />
+    <CustomPagination class="mt-10" :limit="meta.limit" :total="meta.total" />
   </div>
 </template>
 
@@ -52,15 +52,14 @@ const no = computed(
   () => meta.value.total - (page.value - 1) * meta.value.limit
 );
 
-const res = await getPosts(page.value);
-console.log("res: ", res);
+const res = await getData(page.value, meta.value.limit);
 
 if (res) {
   posts.value = res.posts;
   meta.value = res.meta;
 }
 
-async function getPosts(page: number = 1, limit: number = 10) {
+async function getData(page: number = 1, limit: number = 10) {
   try {
     return await $fetch<GetPostData>("http://localhost:8000/post", {
       params: {
@@ -69,12 +68,12 @@ async function getPosts(page: number = 1, limit: number = 10) {
       },
     });
   } catch (e) {
-    alert("게시글 요청 실패");
+    alert("목록 요청 실패");
   }
 }
 
 watchEffect(async () => {
-  const res = await getPosts(page.value, meta.value.limit);
+  const res = await getData(page.value, meta.value.limit);
   if (res) {
     posts.value = res.posts;
     // 아래처럼 프로퍼티만 각각 갱신

@@ -1,10 +1,22 @@
-export type ApprovalStatus = "진행중" | "상신대기" | "반려" | "완료";
+import { ApprovalDocumentStatusEnum } from "~/enum/approval.enum";
 
 export interface ApprovalDocument {
-  id: string;
+  id: number;
   title: string;
-  drafter: string;
-  status: ApprovalStatus;
+  drafter: {
+    name: string;
+  };
+  status: ApprovalDocumentStatusKey;
   createdAt: string;
-  step: string; // ex: '1/3', '완료', '반려'
 }
+
+export interface GetApprovalDocumentData {
+  approvalDocuments: ApprovalDocument[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+}
+
+export type ApprovalDocumentStatusKey = keyof typeof ApprovalDocumentStatusEnum;
