@@ -98,4 +98,4 @@ watchEffect(async () => {
 const search = ref("");
 </script>
 
-<style scoped src="./index.css"></style>
+<style scoped src="/assets/css/shared/pages/board/list.css"></style>

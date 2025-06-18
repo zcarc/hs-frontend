@@ -34,7 +34,7 @@
 .board-list-header,
 .board-list-row {
   display: grid;
-  grid-template-columns: 60px 1.8fr 1fr 110px;
+  grid-template-columns: 60px 4fr 1fr;
   align-items: center;
   padding: 8px 0;
 }
@@ -72,7 +72,7 @@
 .col-title {
   display: block;
   width: 100%;
-  max-width: 420px;
+  max-width: 612px;
   padding-left: 6px;
   white-space: nowrap;
   overflow: hidden;

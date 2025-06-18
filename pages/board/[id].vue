@@ -60,4 +60,4 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped src="./create/index.css"></style>
+<style scoped src="/assets/css/shared/pages/board/create.css"></style>

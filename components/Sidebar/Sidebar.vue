@@ -17,8 +17,7 @@
           "
           class="menu-link"
         >
-          <span class="icon">{{ item.icon }}</span
-          >{{ item.name }}
+          {{ item.name }}
         </NuxtLink>
       </li>
     </ul>
@@ -29,13 +28,13 @@
 const route = useRoute();
 
 const menuItems = [
-  { key: "board", name: "게시판", icon: "", link: "/board" },
-  { key: "mail", name: "메일", icon: "📧", link: "/mail" },
-  { key: "msg", name: "쪽지", icon: "💬", link: "/msg" },
-  { key: "approval", name: "전자결재", icon: "📝", link: "/approval" },
-  { key: "manage", name: "결재 관리", icon: "📋", link: "/manage" },
-  { key: "report", name: "보고", icon: "📊", link: "/report" },
-  { key: "settings", name: "설정", icon: "⚙️", link: "/settings" },
+  { key: "board", name: "게시판", link: "/board" },
+  { key: "approval", name: "전자결재", link: "/approval" },
+  { key: "mail", name: "메일", link: "/mail" },
+  { key: "msg", name: "쪽지", link: "/msg" },
+  { key: "manage", name: "결재 관리", link: "/manage" },
+  { key: "report", name: "보고", link: "/report" },
+  { key: "settings", name: "설정", link: "/settings" },
 ];
 
 function isActive(item: (typeof menuItems)[0]) {

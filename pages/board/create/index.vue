@@ -61,4 +61,4 @@ async function submit() {
 }
 </script>
 
-<style scoped src="./index.css"></style>
+<style scoped src="/assets/css/shared/pages/board/create.css"></style>
