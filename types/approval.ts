@@ -6,7 +6,7 @@ export interface ApprovalDocument {
   drafter: {
     name: string;
   };
-  status: ApprovalDocumentStatusKey;
+  status: ApprovalDocumentStatusEnum;
   createdAt: string;
 }
 
@@ -18,5 +18,3 @@ export interface GetApprovalDocumentData {
     limit: number;
   };
 }
-
-export type ApprovalDocumentStatusKey = keyof typeof ApprovalDocumentStatusEnum;

@@ -1,6 +1,6 @@
 import { ApprovalDocumentStatusEnum } from "~/enum/approval.enum";
-import type { ApprovalDocumentStatusKey } from "~/types/approval";
+import { ApprovalDocumentStatusLabel } from "~/constants/approval.constants";
 
-export function getStatusLabel(status: ApprovalDocumentStatusKey) {
-  return ApprovalDocumentStatusEnum[status];
+export function getStatusLabel(status: ApprovalDocumentStatusEnum) {
+  return ApprovalDocumentStatusLabel[status];
 }

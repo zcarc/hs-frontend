@@ -44,14 +44,8 @@ export const useAuthStore = defineStore("auth", {
         alert("로그아웃 시도 중 오류가 발생했습니다.");
       }
     },
-    // getAccessTokenHeader() {
-    //   return this.accessToken
-    //     ? { Authorization: `Bearer ${this.accessToken}` }
-    //     : null;
-    // },
 
     async tryRefresh(cookie: string = ""): Promise<boolean> {
-      console.log("tryRefresh... ");
       try {
         const res = await $fetch<MeResponse>(
           "http://localhost:8000/auth/refresh",
@@ -61,11 +55,9 @@ export const useAuthStore = defineStore("auth", {
             headers: { cookie },
           },
         );
-        console.log("tryRefresh...  res: ", res);
         this.user = { userId: res.userId, name: res.name };
         return true;
       } catch (e: any) {
-        console.error("refresh 실패: ", e);
         this.user = null;
         return false;
       } finally {

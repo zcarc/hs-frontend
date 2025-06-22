@@ -31,6 +31,11 @@ const menuItems = [
     name: "전자결재",
     route: { path: "/approval", query: { page: 1 } },
   },
+  {
+    key: "approval-step",
+    name: "결재선 관리",
+    route: { path: "/approval/step-template" },
+  },
   { key: "mail", name: "메일", route: { path: "/mail" } },
   { key: "msg", name: "쪽지", route: { path: "/msg" } },
   { key: "manage", name: "결재 관리", route: { path: "/manage" } },
@@ -39,8 +44,9 @@ const menuItems = [
 ];
 
 function isActive(item: (typeof menuItems)[0]) {
-  // 현재 경로가 item.link 로 시작하면 active
-  return route.path.startsWith(item.route.path);
+  const current = route.path;
+  const target = item.route.path;
+  return current === target;
 }
 </script>
 

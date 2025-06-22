@@ -34,7 +34,7 @@
 import { useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
 import type { Post } from "~/types/post";
-import { useAuthApi } from "~/composable/useAuthApi";
+import { useAuthApi } from "~/composable/auth";
 
 const route = useRoute();
 const router = useRouter();

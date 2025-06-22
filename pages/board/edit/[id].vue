@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthApi } from "~/composable/useAuthApi";
+import { useAuthApi } from "~/composable/auth";
 import type { Post } from "~/types/post";
 
 const route = useRoute();
@@ -52,7 +52,7 @@ onMounted(async () => {
   try {
     isLoading.value = true;
     const res = await $fetch<Post>(
-      `http://localhost:8000/post/${route.params.id}`
+      `http://localhost:8000/post/${route.params.id}`,
     );
     title.value = res.title;
     content.value = res.content || "";
@@ -78,7 +78,7 @@ async function submit() {
         title: title.value,
         content: content.value,
       },
-    }
+    },
   );
   if (result) {
     await router.push("/board");

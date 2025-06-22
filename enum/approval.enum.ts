@@ -1,7 +1,14 @@
 export enum ApprovalDocumentStatusEnum {
-  draft = "임시저장",
-  submitted = "상신대기",
-  in_progress = "진행중",
-  completed = "완료",
-  rejected = "반려",
+  DRAFT = "draft",
+  SUBMITTED = "submitted",
+  IN_PROGRESS = "in_progress",
+  REJECTED = "rejected",
+  COMPLETED = "completed",
+}
+
+export enum ApprovalStepStatusEnum {
+  WAITING = "waiting",
+  PENDING = "pending",
+  APPROVED = "approved",
+  REJECTED = "rejected",
 }

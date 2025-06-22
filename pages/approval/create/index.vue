@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthApi } from "~/composable/useAuthApi";
+import { useAuthApi } from "~/composable/auth";
 
 const title = ref("");
 const content = ref("");
