@@ -28,12 +28,12 @@ const menuItems = [
   },
   {
     key: "approval",
-    name: "전자결재",
+    name: "결재 목록",
     route: { path: "/approval", query: { page: 1 } },
   },
   {
     key: "approval-step",
-    name: "결재선 관리",
+    name: "결재선 템플릿 생성",
     route: { path: "/approval/step-template" },
   },
   { key: "mail", name: "메일", route: { path: "/mail" } },

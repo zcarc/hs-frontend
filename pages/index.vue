@@ -43,15 +43,27 @@
         </Card>
 
         <!-- 4) 근태정보 (디지털 시계) -->
-        <Card class="card-clock">
+        <!--        <Card class="card-clock">-->
+        <!--          <CardContent>-->
+        <!--            <h2>근태 정보</h2>-->
+        <!--            <div class="clock-display">{{ clock }}</div>-->
+        <!--            <div class="small-text">출근 시간: 08:45</div>-->
+        <!--            <div class="btn-attendance">-->
+        <!--              <Button @click="checkIn">출근 체크</Button>-->
+        <!--              <Button @click="checkOut">퇴근 체크</Button>-->
+        <!--            </div>-->
+        <!--          </CardContent>-->
+        <!--        </Card>-->
+
+        <Card class="card-today-schedule">
           <CardContent>
-            <h2>근태 정보</h2>
-            <div class="clock-display">{{ clock }}</div>
-            <div class="small-text">출근 시간: 08:45</div>
-            <div class="btn-attendance">
-              <Button @click="checkIn">출근 체크</Button>
-              <Button @click="checkOut">퇴근 체크</Button>
-            </div>
+            <h2>오늘 일정</h2>
+            <ul class="schedule-list">
+              <li v-for="event in todayEvents" :key="event.id">
+                <span class="time">{{ event.time }}</span>
+                <span class="title">{{ event.title }}</span>
+              </li>
+            </ul>
           </CardContent>
         </Card>
 
@@ -261,7 +273,7 @@ const newsList = ref([
 const filteredNews = computed(() =>
   selectedCategory.value === "전체"
     ? newsList.value
-    : newsList.value.filter((n) => n.category === selectedCategory.value)
+    : newsList.value.filter((n) => n.category === selectedCategory.value),
 );
 
 // 날씨 (예시 고정)
@@ -283,6 +295,14 @@ const friends = [
   { name: "김철수", avatar: "https://via.placeholder.com/40" },
   { name: "이영희", avatar: "https://via.placeholder.com/40" },
   { name: "박민수", avatar: "https://via.placeholder.com/40" },
+];
+
+const todayEvents = [
+  { id: 1, time: "10:00", title: "팀 스탠드업 미팅" },
+  { id: 2, time: "11:00", title: "고객 A 프레젠테이션" },
+  { id: 3, time: "12:00", title: "점심 식사" },
+  { id: 4, time: "15:00", title: "디자인 리뷰" },
+  { id: 5, time: "16:00", title: "주간 회고 세션" },
 ];
 </script>
 <style scoped src="./index.css" />

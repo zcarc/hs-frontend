@@ -42,6 +42,17 @@
     </div>
 
     <div>
+      <select v-model="teamCode" class="board-toolbar-select w-[120px]">
+        <option v-for="team in teamList" :value="team.code" :key="team.id">
+          {{ TeamCodeLabel[team.code] }}
+        </option>
+      </select>
+      <span v-if="errors.teamCode" class="text-red-500 text-sm">{{
+        errors.teamCode
+      }}</span>
+    </div>
+
+    <div>
       <button
         type="submit"
         class="w-full bg-black text-white py-2 rounded-xl hover:bg-gray-800 transition cursor-pointer"
@@ -63,6 +74,8 @@ import { z } from "zod";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import type { TeamCodeType } from "~/modules/team/types";
+import { TeamCodeLabel } from "~/modules/team/constants";
 
 const signupSchema = z.object({
   userId: z
@@ -77,10 +90,18 @@ const signupSchema = z.object({
   email: z
     .string({ required_error: "이메일을 입력하세요" })
     .email("올바른 이메일 형식이 아닙니다"),
+  teamCode: z
+    .string({ required_error: "팀을 선택하세요" })
+    .min(1, "팀을 선택하세요"),
+  positionCode: z
+    .string({ required_error: "직위를 선택하세요" })
+    .min(1, "직위를 선택하세요"),
 });
 
 const router = useRouter();
 const errorMessage = ref("");
+
+const teamList = ref<TeamCodeType[]>([]);
 
 const { handleSubmit, errors } = useForm({
   validationSchema: toTypedSchema(signupSchema),
@@ -90,6 +111,8 @@ const { value: userId } = useField("userId");
 const { value: password } = useField("password");
 const { value: name } = useField("name");
 const { value: email } = useField("email");
+const { value: teamCode } = useField("teamCode");
+const { value: positionCode } = useField("positionCode");
 
 const onSubmit = handleSubmit(async (values) => {
   try {
@@ -110,6 +133,32 @@ const onSubmit = handleSubmit(async (values) => {
       errorMessage.value = "회원가입에 실패했습니다";
     }
   }
+});
+
+async function fetchTeamCodeList() {
+  try {
+    const result = await $fetch<TeamCodeType[]>(
+      "http://localhost:8000/common-code",
+      {
+        method: "GET",
+        params: {
+          code: "TEAM",
+        },
+      },
+    );
+    console.log("result: ", result);
+    if (result) {
+      teamList.value = result;
+      teamCode.value = result[0].code;
+    }
+  } catch (e) {
+    console.error(e);
+    alert("팀코드 목록을 가져오는 중 에러 발생");
+  }
+}
+
+onMounted(async () => {
+  await fetchTeamCodeList();
 });
 </script>
 

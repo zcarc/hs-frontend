@@ -24,7 +24,7 @@
             {{ user.name }}
           </option>
         </select>
-        <button type="button" class="btn-add" @click="addStep">추가</button>
+        <button type="button" class="btn-submit" @click="addStep">추가</button>
       </div>
       <!--      <div class="form-row">-->
       <!--        <label class="form-label" for="approver">결재자 선택</label>-->
@@ -42,11 +42,17 @@
 
       <!-- 현재까지 추가된 결재선 목록 -->
       <div v-if="steps.length > 0" class="form-row">
-        <label class="form-label">결재선 미리보기</label>
-        <ul>
+        <label class="form-label">결재선</label>
+        <ul class="space-y-[12px]">
           <li v-for="(step, index) in steps" :key="index">
             {{ index + 1 }}단계 – {{ getUserName(step.approverId) }}
-            <button type="button" @click="removeStep(index)">삭제</button>
+            <button
+              class="btn-submit fix-p"
+              type="button"
+              @click="removeStep(index)"
+            >
+              삭제
+            </button>
           </li>
         </ul>
       </div>
@@ -64,7 +70,7 @@
       <div class="board-toolbar">
         <button type="submit" class="btn-submit">저장</button>
         <NuxtLink to="/approval">
-          <button type="button" class="btn-cancel">목록으로</button>
+          <button type="button" class="btn-submit">목록으로</button>
         </NuxtLink>
       </div>
 
@@ -168,3 +174,8 @@ async function submit() {
 </script>
 
 <style scoped src="/assets/css/shared/pages/board/create.css"></style>
+<style scoped>
+.fix-p {
+  padding: 2px 10px;
+}
+</style>
