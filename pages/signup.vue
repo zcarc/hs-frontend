@@ -42,13 +42,13 @@
     </div>
 
     <div>
-      <select v-model="teamCode" class="board-toolbar-select w-[120px]">
-        <option v-for="team in teamList" :value="team.code" :key="team.id">
-          {{ TeamCodeLabel[team.code] }}
+      <select v-model="teamId" class="board-toolbar-select w-full">
+        <option v-for="item in teamList" :value="item.id" :key="item.id">
+          {{ item.name }}
         </option>
       </select>
-      <span v-if="errors.teamCode" class="text-red-500 text-sm">{{
-        errors.teamCode
+      <span v-if="errors.teamId" class="text-red-500 text-sm">{{
+        errors.teamId
       }}</span>
     </div>
 
@@ -74,8 +74,7 @@ import { z } from "zod";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import type { TeamCodeType } from "~/modules/team/types";
-import { TeamCodeLabel } from "~/modules/team/constants";
+import type { TeamType } from "~/modules/team/types";
 
 const signupSchema = z.object({
   userId: z
@@ -90,18 +89,15 @@ const signupSchema = z.object({
   email: z
     .string({ required_error: "이메일을 입력하세요" })
     .email("올바른 이메일 형식이 아닙니다"),
-  teamCode: z
-    .string({ required_error: "팀을 선택하세요" })
+  teamId: z
+    .number({ required_error: "팀을 선택하세요" })
     .min(1, "팀을 선택하세요"),
-  positionCode: z
-    .string({ required_error: "직위를 선택하세요" })
-    .min(1, "직위를 선택하세요"),
 });
 
 const router = useRouter();
 const errorMessage = ref("");
 
-const teamList = ref<TeamCodeType[]>([]);
+const teamList = ref<TeamType[]>([]);
 
 const { handleSubmit, errors } = useForm({
   validationSchema: toTypedSchema(signupSchema),
@@ -111,8 +107,7 @@ const { value: userId } = useField("userId");
 const { value: password } = useField("password");
 const { value: name } = useField("name");
 const { value: email } = useField("email");
-const { value: teamCode } = useField("teamCode");
-const { value: positionCode } = useField("positionCode");
+const { value: teamId } = useField("teamId");
 
 const onSubmit = handleSubmit(async (values) => {
   try {
@@ -137,7 +132,7 @@ const onSubmit = handleSubmit(async (values) => {
 
 async function fetchTeamCodeList() {
   try {
-    const result = await $fetch<TeamCodeType[]>(
+    const result = await $fetch<TeamType[]>(
       "http://localhost:8000/common-code",
       {
         method: "GET",
@@ -149,7 +144,7 @@ async function fetchTeamCodeList() {
     console.log("result: ", result);
     if (result) {
       teamList.value = result;
-      teamCode.value = result[0].code;
+      teamId.value = result[0].id;
     }
   } catch (e) {
     console.error(e);

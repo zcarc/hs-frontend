@@ -1,6 +1,19 @@
-import type { TeamCodeEnum } from "~/modules/team/enum";
+// export enum TeamCodeEnum {
+//   DEVELOPMENT = "development",
+//   MARKETING = "marketing",
+//   HR = "hr",
+//   SALES = "sales",
+// }
 
-export interface TeamCodeType {
+// export const TeamCodeLabel: Record<TeamCodeEnum, string> = {
+//   [TeamCodeEnum.DEVELOPMENT]: "개발팀",
+//   [TeamCodeEnum.MARKETING]: "마케팅팀",
+//   [TeamCodeEnum.HR]: "인사팀",
+//   [TeamCodeEnum.SALES]: "영업팀",
+// };
+
+export interface TeamType {
   id: number;
-  code: TeamCodeEnum;
+  code: string;
+  name: string;
 }
