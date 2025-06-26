@@ -3,7 +3,16 @@
     <h1 class="board-title">결재선 템플릿 생성</h1>
 
     <form class="board-form" @submit.prevent="submit">
-      <!-- 1) 템플릿 이름 입력 -->
+      <!-- 팀 이름 선택-->
+      <div class="form-row">
+        <label class="form-label" for="approver">팀 선택</label>
+        <select id="team" v-model="teamId" class="form-input">
+          <option v-for="team in teams" :key="team.id" :value="team.id">
+            {{ team.name }}
+          </option>
+        </select>
+      </div>
+      <!-- 템플릿 이름 입력 -->
       <div class="form-row">
         <label class="form-label" for="templateName">템플릿 이름</label>
         <input
@@ -15,11 +24,10 @@
           required
         />
       </div>
-      <!-- 2) 결재자 선택 및 추가 -->
+      <!-- 결재자 선택 및 추가 -->
       <div class="form-row">
         <label class="form-label" for="approver">결재자 선택</label>
-        <select id="approver" v-model="selectedId" class="form-input">
-          <option disabled value="">-- 결재자를 선택하세요 --</option>
+        <select id="approver" v-model="approverId" class="form-input">
           <option v-for="user in users" :key="user.id" :value="user.id">
             {{ user.name }}
           </option>
@@ -28,7 +36,7 @@
       </div>
       <!--      <div class="form-row">-->
       <!--        <label class="form-label" for="approver">결재자 선택</label>-->
-      <!--        <select id="approver" v-model="selectedId" class="form-input">-->
+      <!--        <select id="approver" v-model="approverId" class="form-input">-->
       <!--          <option disabled value="">&#45;&#45; 결재자를 선택하세요 &#45;&#45;</option>-->
       <!--          <option v-for="user in users" :key="user.id" :value="user.id">-->
       <!--            {{ user.name }}-->
@@ -86,44 +94,63 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
 import type { CreateApprovalSteps } from "~/modules/approval/types";
 import { useAuthApi } from "~/composable/auth";
-import { findAllUsers } from "~/modules/user/api";
+import { fetchAllUsersByTeamId } from "~/modules/user/api";
+import { fetchCommonCodeList } from "~/modules/common-code/api";
+import type { CommonCode } from "~/modules/common-code/types";
 
-// 1) 템플릿 이름
+const teamId = ref<number>();
 const templateName = ref<string>("");
+const approverId = ref<number | null>();
 
-// 2) 결재자 선택용
-const selectedId = ref<number | "">("");
+const teams = ref<CommonCode[]>([]);
 const steps = ref<CreateApprovalSteps[]>([]);
 const users = ref<{ id: number; name: string }[]>([]);
 
-const router = useRouter();
-
-// 사용자 목록 불러오기
-async function fetchUsers() {
-  const res = await findAllUsers();
-  if (res) {
-    users.value = res;
+async function initUsers() {
+  // 사용자 목록 불러오기
+  if (teamId.value) {
+    try {
+      const res = await fetchAllUsersByTeamId(teamId.value);
+      if (res) {
+        users.value = res;
+        approverId.value = res[0].id;
+      }
+    } catch (e) {
+      users.value = [];
+      approverId.value = null;
+    }
   }
 }
 
-onMounted(fetchUsers);
+onMounted(async () => {
+  // 팀 목록 불러오기
+  const teamResult = await fetchCommonCodeList("TEAM");
+  if (teamResult?.length) {
+    teams.value = teamResult;
+    teamId.value = teamResult[0].id;
+  }
+
+  await initUsers();
+});
+
+watch(teamId, async () => {
+  await initUsers();
+});
 
 // 결재자 추가
 function addStep() {
-  if (!selectedId.value) {
+  if (!approverId.value) {
     return;
   }
-  if (steps.value.some((step) => step.approverId === selectedId.value)) {
+  if (steps.value.some((step) => step.approverId === approverId.value)) {
     alert("이미 추가된 사용자입니다.");
     return;
   }
   steps.value.push({
-    approverId: selectedId.value,
+    approverId: approverId.value,
   });
-  selectedId.value = "";
 }
 
 // 결재자 삭제
@@ -151,6 +178,7 @@ async function submit() {
       name: templateName.value.trim(),
     },
     stepData: steps.value,
+    teamId: teamId.value,
   };
 
   try {

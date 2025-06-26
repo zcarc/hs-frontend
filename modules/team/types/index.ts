@@ -11,9 +11,3 @@
 //   [TeamCodeEnum.HR]: "인사팀",
 //   [TeamCodeEnum.SALES]: "영업팀",
 // };
-
-export interface TeamType {
-  id: number;
-  code: string;
-  name: string;
-}

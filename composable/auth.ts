@@ -10,7 +10,7 @@ export async function useAuthApi<T>(requestUrl: string, options: {}) {
     });
   } catch (e: any) {
     const errorCode = e?.response?._data?.code;
-    console.log("errorCode: ", errorCode);
+    console.log("useAuthApi e: ", e);
     if (
       errorCode === "UNAUTHORIZED_ACCESS_TOKEN" ||
       errorCode === "NOT_FOUND_ACCESS_TOKEN"

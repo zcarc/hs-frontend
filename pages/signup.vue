@@ -74,7 +74,8 @@ import { z } from "zod";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import type { TeamType } from "~/modules/team/types";
+import { fetchCommonCodeList } from "~/modules/common-code/api";
+import type { CommonCode } from "~/modules/common-code/types";
 
 const signupSchema = z.object({
   userId: z
@@ -97,7 +98,7 @@ const signupSchema = z.object({
 const router = useRouter();
 const errorMessage = ref("");
 
-const teamList = ref<TeamType[]>([]);
+const teamList = ref<CommonCode[]>([]);
 
 const { handleSubmit, errors } = useForm({
   validationSchema: toTypedSchema(signupSchema),
@@ -130,30 +131,12 @@ const onSubmit = handleSubmit(async (values) => {
   }
 });
 
-async function fetchTeamCodeList() {
-  try {
-    const result = await $fetch<TeamType[]>(
-      "http://localhost:8000/common-code",
-      {
-        method: "GET",
-        params: {
-          code: "TEAM",
-        },
-      },
-    );
-    console.log("result: ", result);
-    if (result) {
-      teamList.value = result;
-      teamId.value = result[0].id;
-    }
-  } catch (e) {
-    console.error(e);
-    alert("팀코드 목록을 가져오는 중 에러 발생");
-  }
-}
-
 onMounted(async () => {
-  await fetchTeamCodeList();
+  const teamCodeList = await fetchCommonCodeList("TEAM");
+  if (teamCodeList?.length) {
+    teamList.value = teamCodeList;
+    teamId.value = teamCodeList[0].id;
+  }
 });
 </script>
 

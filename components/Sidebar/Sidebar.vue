@@ -33,7 +33,7 @@ const menuItems = [
   },
   {
     key: "approval-step",
-    name: "결재선 템플릿 생성",
+    name: "결재선 템플릿 생성 (관리자)",
     route: { path: "/approval/step-template" },
   },
   { key: "mail", name: "메일", route: { path: "/mail" } },
