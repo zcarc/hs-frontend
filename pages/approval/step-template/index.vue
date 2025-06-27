@@ -93,12 +93,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import type { CreateApprovalSteps } from "~/modules/approval/types";
+import { onMounted, ref } from "vue";
 import { useAuthApi } from "~/composable/auth";
 import { fetchAllUsersByTeamId } from "~/modules/user/api";
 import { fetchCommonCodeList } from "~/modules/common-code/api";
 import type { CommonCode } from "~/modules/common-code/types";
+import type { CreateApprovalSteps } from "~/modules/approval/step/types";
 
 const teamId = ref<number>();
 const templateName = ref<string>("");
