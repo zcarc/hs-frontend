@@ -2,6 +2,7 @@
   <div class="board-container">
     <h1 class="board-title">결재서 작성</h1>
     <form class="board-form" @submit.prevent="submit">
+      <!-- 결재선 템플릿 목록-->
       <div class="form-row">
         <label class="form-label" for="template">결재선 템플릿</label>
         <select v-model="selectedTemplateId" class="form-input">
@@ -10,6 +11,7 @@
           </option>
         </select>
       </div>
+      <!-- 결재자 목록-->
       <div v-if="selectedTemplateApprovers.length" class="form-row">
         <label class="form-label">결재자 목록</label>
         <ul class="approvers-preview">
@@ -54,7 +56,7 @@
 
 <script setup lang="ts">
 import { useAuthApi } from "~/composable/auth";
-import type { approvalStepTemplate } from "~/modules/approval/step-template/types";
+import type { ApprovalStepTemplate } from "~/modules/approval/step-template/types";
 import type { User } from "~/modules/user/types";
 
 const title = ref("");
@@ -87,20 +89,19 @@ async function submit() {
 
 // 결재선 로직들
 const selectedTemplateId = ref<number | null>(null);
-const templates = ref<approvalStepTemplate[]>([]);
+const templates = ref<ApprovalStepTemplate[]>([]);
 const selectedTemplateApprovers = ref<User[]>([]);
 
-watch(selectedTemplateId, async (id) => {
-  if (id) {
-    const res = await $fetch(
-      `http://localhost:8000/approval/approval-template/${id}`,
+watch(selectedTemplateId, async (templateId) => {
+  if (templateId) {
+    selectedTemplateApprovers.value = await $fetch<User[]>(
+      `http://localhost:8000/approval/all/step-users/${templateId}`,
     );
-    selectedTemplateApprovers.value = res.approvers;
   }
 });
 
 onMounted(async () => {
-  const res = await $fetch<approvalStepTemplate[]>(
+  const res = await $fetch<ApprovalStepTemplate[]>(
     `http://localhost:8000/approval/all/step-template`,
   );
   templates.value = res;

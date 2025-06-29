@@ -1,209 +1,99 @@
 <template>
   <div class="board-container">
-    <h1 class="board-title">결재선 템플릿 생성</h1>
-
-    <form class="board-form" @submit.prevent="submit">
-      <!-- 팀 이름 선택-->
-      <div class="form-row">
-        <label class="form-label" for="approver">팀 선택</label>
-        <select id="team" v-model="teamId" class="form-input">
-          <option v-for="team in teams" :key="team.id" :value="team.id">
-            {{ team.name }}
-          </option>
-        </select>
-      </div>
-      <!-- 템플릿 이름 입력 -->
-      <div class="form-row">
-        <label class="form-label" for="templateName">템플릿 이름</label>
-        <input
-          id="templateName"
-          type="text"
-          v-model="templateName"
-          placeholder="템플릿 이름을 입력하세요"
-          class="form-input"
-          required
-        />
-      </div>
-      <!-- 결재자 선택 및 추가 -->
-      <div class="form-row">
-        <label class="form-label" for="approver">결재자 선택</label>
-        <select id="approver" v-model="approverId" class="form-input">
-          <option v-for="user in users" :key="user.id" :value="user.id">
-            {{ user.name }}
-          </option>
-        </select>
-        <button type="button" class="btn-submit" @click="addStep">추가</button>
-      </div>
-      <!--      <div class="form-row">-->
-      <!--        <label class="form-label" for="approver">결재자 선택</label>-->
-      <!--        <select id="approver" v-model="approverId" class="form-input">-->
-      <!--          <option disabled value="">&#45;&#45; 결재자를 선택하세요 &#45;&#45;</option>-->
-      <!--          <option v-for="user in users" :key="user.id" :value="user.id">-->
-      <!--            {{ user.name }}-->
-      <!--          </option>-->
-      <!--        </select>-->
-      <!--      </div>-->
-
-      <!--      <div class="board-toolbar">-->
-      <!--        <button type="button" class="btn-submit" @click="addStep">추가</button>-->
-      <!--      </div>-->
-
-      <!-- 현재까지 추가된 결재선 목록 -->
-      <div v-if="steps.length > 0" class="form-row">
-        <label class="form-label">결재선</label>
-        <ul class="space-y-[12px]">
-          <li v-for="(step, index) in steps" :key="index">
-            {{ index + 1 }}단계 – {{ getUserName(step.approverId) }}
-            <button
-              class="btn-submit fix-p"
-              type="button"
-              @click="removeStep(index)"
-            >
-              삭제
-            </button>
-          </li>
-        </ul>
-      </div>
-      <!--      <div v-if="steps.length > 0" class="form-row">-->
-      <!--        <label class="form-label">결재선 목록</label>-->
-      <!--        <ul>-->
-      <!--          <li v-for="(step, index) in steps" :key="index">-->
-      <!--            {{ index + 1 }}단계 - {{ getUserName(step.approverId) }}-->
-      <!--            <button type="button" @click="removeStep(index)">삭제</button>-->
-      <!--          </li>-->
-      <!--        </ul>-->
-      <!--      </div>-->
-
-      <!-- 저장 / 취소 버튼 -->
-      <div class="board-toolbar">
-        <button type="submit" class="btn-submit">저장</button>
-        <NuxtLink to="/approval">
-          <button type="button" class="btn-submit">목록으로</button>
+    <h1 class="board-title">결재선 템플릿 목록</h1>
+    <div class="board-toolbar">
+      <input
+        v-model="search"
+        type="text"
+        placeholder="검색어를 입력하세요"
+        class="board-search"
+      />
+      <template v-if="auth.user">
+        <NuxtLink to="step-template/create">
+          <Button>생성</Button>
         </NuxtLink>
+      </template>
+    </div>
+    <div class="board-list-header">
+      <span class="col-no">번호</span>
+      <span class="col-title">이름</span>
+      <span class="col-author">작성자</span>
+    </div>
+    <div v-if="templates.length > 0" class="board-list">
+      <div
+        v-for="(template, index) in templates"
+        :key="template.id"
+        class="board-list-row"
+      >
+        <span class="col-no"> {{ no - index }}</span>
+        <NuxtLink :to="`step-template/${template.id}`">
+          <span class="col-title cursor-pointer">{{ template.name }}</span>
+        </NuxtLink>
+        <span class="col-author">{{ template.creator.name }}</span>
       </div>
-
-      <!--      <div class="board-toolbar">-->
-      <!--        <button type="submit" class="btn-submit">저장</button>-->
-      <!--        <NuxtLink to="/approval">-->
-      <!--          <button class="btn-submit">목록으로</button>-->
-      <!--        </NuxtLink>-->
-      <!--      </div>-->
-    </form>
+    </div>
+    <div v-else class="board-empty">템플릿이 없습니다.</div>
+    <CustomPagination class="mt-10" :limit="meta.limit" :total="meta.total" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { useAuthApi } from "~/composable/auth";
-import { fetchAllUsersByTeamId } from "~/modules/user/api";
-import { fetchCommonCodeList } from "~/modules/common-code/api";
-import type { CommonCode } from "~/modules/common-code/types";
-import type { CreateApprovalSteps } from "~/modules/approval/step/types";
+import type {
+  ApprovalStepTemplate,
+  ListApprovalTemplate,
+} from "~/modules/approval/step-template/types";
 
-const teamId = ref<number>();
-const templateName = ref<string>("");
-const approverId = ref<number | null>();
+const auth = useAuthStore();
 
-const teams = ref<CommonCode[]>([]);
-const steps = ref<CreateApprovalSteps[]>([]);
-const users = ref<{ id: number; name: string }[]>([]);
-
-async function initUsers() {
-  // 사용자 목록 불러오기
-  if (teamId.value) {
-    try {
-      const res = await fetchAllUsersByTeamId(teamId.value);
-      if (res) {
-        users.value = res;
-        approverId.value = res[0].id;
-      }
-    } catch (e) {
-      users.value = [];
-      approverId.value = null;
-    }
-  }
-}
-
-onMounted(async () => {
-  // 팀 목록 불러오기
-  const teamResult = await fetchCommonCodeList("TEAM");
-  if (teamResult?.length) {
-    teams.value = teamResult;
-    teamId.value = teamResult[0].id;
-  }
-
-  await initUsers();
+const templates = ref<ApprovalStepTemplate[]>([]);
+const meta = ref({
+  total: 0,
+  page: 1,
+  limit: 10,
 });
 
-watch(teamId, async () => {
-  await initUsers();
-});
+const route = useRoute();
+const page = computed(() => Number(route.query.page) || 1);
 
-// 결재자 추가
-function addStep() {
-  if (!approverId.value) {
-    return;
-  }
-  if (steps.value.some((step) => step.approverId === approverId.value)) {
-    alert("이미 추가된 사용자입니다.");
-    return;
-  }
-  steps.value.push({
-    approverId: approverId.value,
-  });
+const no = computed(
+  () => meta.value.total - (page.value - 1) * meta.value.limit
+);
+
+const res = await getData(page.value, meta.value.limit);
+
+if (res) {
+  templates.value = res.templates;
+  meta.value = res.meta;
 }
 
-// 결재자 삭제
-function removeStep(index: number) {
-  steps.value.splice(index, 1);
-}
-
-// ID -> 이름 반환 헬퍼
-function getUserName(id: number) {
-  return users.value.find((u) => u.id === id)?.name;
-}
-
-// 템플릿 저장
-async function submit() {
-  if (!templateName.value.trim()) {
-    return alert("템플릿 이름을 입력해주세요.");
-  }
-  if (steps.value.length === 0) {
-    return alert("결재선을 한 명 이상 추가해주세요.");
-  }
-
-  // payload 형태 맞춤
-  const payload = {
-    templateData: {
-      name: templateName.value.trim(),
-    },
-    stepData: steps.value,
-    teamId: teamId.value,
-  };
-
+async function getData(page: number = 1, limit: number = 10) {
   try {
-    const result = await useAuthApi(
-      "http://localhost:8000/approval/create/step-template",
+    return await $fetch<ListApprovalTemplate>(
+      "http://localhost:8000/approval/all/step-template",
       {
-        method: "POST",
-        body: payload,
-      },
+        params: {
+          page,
+          limit,
+        },
+      }
     );
-
-    console.log("result: ", result);
-
-    if (result) {
-      alert("템플릿이 성공적으로 저장되었습니다.");
-    }
-  } catch (error) {
-    alert("템플릿 저장 중 오류가 발생했습니다.");
+  } catch (e) {
+    alert("목록 요청 실패");
   }
 }
+
+watchEffect(async () => {
+  const res = await getData(page.value, meta.value.limit);
+  if (res) {
+    templates.value = res.templates;
+    // 아래처럼 프로퍼티만 각각 갱신
+    meta.value.total = res.meta.total;
+    meta.value.page = res.meta.page;
+    meta.value.limit = res.meta.limit;
+  }
+});
+
+const search = ref("");
 </script>
 
-<style scoped src="/assets/css/shared/pages/board/create.css"></style>
-<style scoped>
-.fix-p {
-  padding: 2px 10px;
-}
-</style>
+<style scoped src="/modules/board/css/shared/index.css"></style>

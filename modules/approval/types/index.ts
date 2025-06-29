@@ -1,4 +1,4 @@
-import { ApprovalDocumentStatusEnum } from "~/enum/approval.enum";
+import type { Meta } from "~/modules/post/types";
 
 export interface ApprovalDocument {
   id: number;
@@ -12,9 +12,13 @@ export interface ApprovalDocument {
 
 export interface GetApprovalDocumentData {
   approvalDocuments: ApprovalDocument[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-  };
+  meta: Meta;
+}
+
+export enum ApprovalDocumentStatusEnum {
+  DRAFT = "draft",
+  SUBMITTED = "submitted",
+  IN_PROGRESS = "in_progress",
+  REJECTED = "rejected",
+  COMPLETED = "completed",
 }

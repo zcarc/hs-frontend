@@ -1,4 +1,4 @@
-import { ApprovalDocumentStatusEnum } from "~/enum/approval.enum";
+import type { ApprovalDocumentStatusEnum } from "~/modules/approval/types";
 
 export const ApprovalDocumentStatusLabel: Record<
   ApprovalDocumentStatusEnum,

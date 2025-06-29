@@ -1,8 +1,4 @@
-export enum UserRole {
-  USER = "user",
-  APPROVAL = "approval",
-  ADMIN = "admin",
-}
+import type { CommonCode } from "~/modules/common-code/types";
 
 export interface User {
   id: number;
@@ -11,5 +7,5 @@ export interface User {
   name: string;
   createdAt: Date;
   updatedAt: Date;
-  userRole: UserRole;
+  userRole: CommonCode;
 }

@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import type { GetPostData, Post } from "~/types/post";
+import type { GetPostData, Post } from "~/modules/post/types";
 
 const auth = useAuthStore();
 
@@ -49,7 +49,7 @@ const route = useRoute();
 const page = computed(() => Number(route.query.page) || 1);
 
 const no = computed(
-  () => meta.value.total - (page.value - 1) * meta.value.limit
+  () => meta.value.total - (page.value - 1) * meta.value.limit,
 );
 
 const res = await getData(page.value, meta.value.limit);
@@ -83,18 +83,7 @@ watchEffect(async () => {
   }
 });
 
-// const { data, pending: isLoading } = await useAsyncData<GetPostData>(
-//   "posts",
-//   () =>
-//     $fetch("http://localhost:8000/post", {
-//       params: {
-//         page: meta.value.page,
-//         limit: meta.value.limit,
-//       },
-//     })
-// );
-
 const search = ref("");
 </script>
 
-<style scoped src="/assets/css/shared/pages/board/list.css"></style>
+<style scoped src="/modules/board/css/shared/index.css"></style>

@@ -33,8 +33,8 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
-import type { Post } from "~/types/post";
 import { useAuthApi } from "~/composable/auth";
+import type { Post } from "~/modules/post/types";
 
 const route = useRoute();
 const router = useRouter();

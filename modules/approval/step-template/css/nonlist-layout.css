@@ -1,0 +1,25 @@
+.board-container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 900px;
+    margin: 30px auto 0 auto;
+    padding: 32px 24px;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.board-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 18px;
+}
+
+@media (max-width: 700px) {
+    .board-container {
+        padding: 12px 4px;
+    }
+}

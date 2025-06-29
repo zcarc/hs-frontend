@@ -1,13 +1,6 @@
-// export enum TeamCodeEnum {
-//   DEVELOPMENT = "development",
-//   MARKETING = "marketing",
-//   HR = "hr",
-//   SALES = "sales",
-// }
+import type { CommonCode } from "~/modules/common-code/types";
 
-// export const TeamCodeLabel: Record<TeamCodeEnum, string> = {
-//   [TeamCodeEnum.DEVELOPMENT]: "개발팀",
-//   [TeamCodeEnum.MARKETING]: "마케팅팀",
-//   [TeamCodeEnum.HR]: "인사팀",
-//   [TeamCodeEnum.SALES]: "영업팀",
-// };
+export interface Team {
+  id: number;
+  commonCode: CommonCode;
+}

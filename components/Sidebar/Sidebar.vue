@@ -33,8 +33,13 @@ const menuItems = [
   },
   {
     key: "approval-step",
-    name: "결재선 템플릿 생성 (관리자)",
+    name: "결재선 템플릿 목록",
     route: { path: "/approval/step-template" },
+  },
+  {
+    key: "approval-step-edit",
+    name: "결재선 템플릿 수정 (관리자)",
+    route: { path: "/approval/step-template/edit" },
   },
   { key: "mail", name: "메일", route: { path: "/mail" } },
   { key: "msg", name: "쪽지", route: { path: "/msg" } },

@@ -1,10 +1,6 @@
 export interface GetPostData {
   posts: Post[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-  };
+  meta: Meta;
 }
 
 export interface Post {
@@ -14,4 +10,10 @@ export interface Post {
   author: {
     name: string;
   };
+}
+
+export interface Meta {
+  total: number;
+  page: number;
+  limit: number;
 }
