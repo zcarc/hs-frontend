@@ -6,7 +6,7 @@ export interface ApprovalDocument {
   drafter: {
     name: string;
   };
-  status: ApprovalDocumentStatusEnum;
+  status: "draft" | "submitted" | "in_progress" | "rejected" | "completed";
   createdAt: string;
 }
 
@@ -15,10 +15,9 @@ export interface GetApprovalDocumentData {
   meta: Meta;
 }
 
-export enum ApprovalDocumentStatusEnum {
-  DRAFT = "draft",
-  SUBMITTED = "submitted",
-  IN_PROGRESS = "in_progress",
-  REJECTED = "rejected",
-  COMPLETED = "completed",
+export interface ApprovalDocumentPayload {
+  templateId: string;
+  title: string;
+  content: string;
+  status: string;
 }
