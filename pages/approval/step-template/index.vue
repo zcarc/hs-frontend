@@ -82,7 +82,7 @@ async function getData(page: number = 1, limit: number = 10) {
   }
 }
 
-watchEffect(async () => {
+watch(page.value, async () => {
   const res = await getData(page.value, meta.value.limit);
   if (res) {
     templates.value = res.templates;

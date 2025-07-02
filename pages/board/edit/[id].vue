@@ -37,16 +37,16 @@
 
 <script setup lang="ts">
 import { useAuthApi } from "~/composable/auth";
-import type { Post } from "~/types/post";
+import type { Post } from "~/modules/post/types";
 
 const route = useRoute();
 const router = useRouter();
 
 const auth = useAuthStore();
 
-const title = ref("");
-const content = ref("");
-const isLoading = ref(false);
+const title = ref<string>("");
+const content = ref<string>("");
+const isLoading = ref<boolean>(false);
 
 onMounted(async () => {
   try {

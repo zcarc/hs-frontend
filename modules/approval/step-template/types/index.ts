@@ -28,8 +28,8 @@ export interface SaveApprovalTemplatePayload {
 }
 
 export interface SaveApprovalTemplateInitialData {
+  teamId: number | null;
   templateName: string;
-  teamId: number;
   steps: SaveApprovalSteps[];
 }
 
@@ -38,6 +38,15 @@ export interface DetailApprovalTemplateInitialData {
   teamId: number;
   teamName: string;
   users: User[];
+}
+
+export interface EditSaveApprovalTemplatePayload {
+  templateId: number;
+  templateData: {
+    name: string;
+  };
+  stepData: SaveApprovalSteps[];
+  teamId: number;
 }
 
 export interface ListApprovalTemplate {

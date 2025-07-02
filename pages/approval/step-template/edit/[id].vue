@@ -1,6 +1,6 @@
 <template>
   <div class="board-container">
-    <h1 class="board-title">결재선 템플릿 생성 (관리자)</h1>
+    <h1 class="board-title">결재선 템플릿 수정 (관리자)</h1>
     <!--    <StepTemplateInputForm :submitCb="submitCb" />-->
     <form v-if="!isLoading" class="board-form" @submit.prevent="onSubmit">
       <!-- 팀 이름 선택-->
@@ -67,12 +67,16 @@
 import { useAuthApi } from "~/composable/auth";
 import type {
   ApprovalStepTemplate,
+  EditSaveApprovalTemplatePayload,
   SaveApprovalTemplateInitialData,
   SaveApprovalTemplatePayload,
 } from "~/modules/approval/step-template/types";
 import { fetchAllUsersByTeamId } from "~/modules/user/api";
 import type { CommonCode } from "~/modules/common-code/types";
 import { fetchCommonCodeList } from "~/modules/common-code/api";
+
+const route = useRoute();
+const id = route.params.id;
 
 const form: SaveApprovalTemplateInitialData = reactive({
   teamId: null,
@@ -124,6 +128,10 @@ function removeStep(index: number) {
 }
 
 async function onSubmit() {
+  const parsedId = typeof id === "string" ? parseInt(id) : null;
+  if (!parsedId) {
+    return;
+  }
   const { templateName, teamId, steps } = form;
   const templateNameTrim = templateName.trim();
   if (!templateNameTrim) {
@@ -136,7 +144,8 @@ async function onSubmit() {
     return alert("팀을 선택해주세요.");
   }
 
-  const payload: SaveApprovalTemplatePayload = {
+  const payload: EditSaveApprovalTemplatePayload = {
+    templateId: parsedId,
     templateData: {
       name: templateNameTrim,
     },
@@ -146,11 +155,11 @@ async function onSubmit() {
 
   try {
     const result = await useAuthApi(
-      "http://localhost:8000/approval/create/step-template",
+      "http://localhost:8000/approval/edit/step-template",
       {
-        method: "POST",
+        method: "PATCH",
         body: payload,
-      },
+      }
     );
 
     if (result) {
@@ -165,15 +174,25 @@ onMounted(async () => {
   try {
     isLoading.value = true;
 
-    // 팀 목록
+    // 템플릿 상세 정보 가져오기
+    const res = await $fetch<ApprovalStepTemplate>(
+      `http://localhost:8000/approval/step-template/${id}`
+    );
+
+    // 팀 이름 초기화
     const teamResult = await fetchCommonCodeList("TEAM");
     if (teamResult?.length) {
       teams.value = teamResult;
-      form.teamId = teamResult[0].id;
+      form.teamId = res?.teamId;
     }
 
-    // 결재자 목록
-    await initUsers();
+    // 템플릿 이름 초기화
+    if (res?.name) {
+      form.templateName = res.name;
+    }
+
+    // 결재자 목록 (데이터를 가져와서 변경하기에 호출 불필요)
+    // await initUsers();
   } catch (error) {
   } finally {
     isLoading.value = false;
@@ -184,7 +203,7 @@ watch(() => form.teamId, initUsers);
 </script>
 
 <style scoped src="~/modules/approval/step-template/css/nonlist-layout.css" />
-<style scoped src="./index.css" />
+<style scoped src="./[id].css" />
 <style scoped>
 .fix-p {
   padding: 2px 10px;

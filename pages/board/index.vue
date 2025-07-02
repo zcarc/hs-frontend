@@ -49,7 +49,7 @@ const route = useRoute();
 const page = computed(() => Number(route.query.page) || 1);
 
 const no = computed(
-  () => meta.value.total - (page.value - 1) * meta.value.limit,
+  () => meta.value.total - (page.value - 1) * meta.value.limit
 );
 
 const res = await getData(page.value, meta.value.limit);
@@ -72,7 +72,7 @@ async function getData(page: number = 1, limit: number = 10) {
   }
 }
 
-watchEffect(async () => {
+watch(page.value, async () => {
   const res = await getData(page.value, meta.value.limit);
   if (res) {
     posts.value = res.posts;
