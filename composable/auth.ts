@@ -4,7 +4,7 @@ export async function useAuthApi<T>(requestUrl: string, options: {}) {
   const auth = useAuthStore();
 
   try {
-    return await $fetch(requestUrl, {
+    return await $fetch<T>(requestUrl, {
       ...options,
       credentials: "include",
     });

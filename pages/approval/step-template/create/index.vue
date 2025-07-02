@@ -55,7 +55,7 @@
       <!-- 저장 / 취소 버튼 -->
       <div class="board-toolbar">
         <button type="submit" class="btn-submit">저장</button>
-        <NuxtLink to="/approval">
+        <NuxtLink to="/approval/step-template">
           <button type="button" class="btn-submit">목록으로</button>
         </NuxtLink>
       </div>
@@ -66,7 +66,6 @@
 <script setup lang="ts">
 import { useAuthApi } from "~/composable/auth";
 import type {
-  ApprovalStepTemplate,
   SaveApprovalTemplateInitialData,
   SaveApprovalTemplatePayload,
 } from "~/modules/approval/step-template/types";

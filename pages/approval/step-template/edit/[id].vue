@@ -27,7 +27,12 @@
       <!-- 결재자 선택 및 추가 -->
       <div class="form-row">
         <label class="form-label" for="approver">결재자 선택</label>
-        <select id="approver" v-model="approverId" class="form-input">
+        <select
+          id="approver"
+          v-model="approverId"
+          :disabled="!approverId"
+          class="form-input"
+        >
           <option v-for="user in users" :key="user.id" :value="user.id">
             {{ user.name }}
           </option>
@@ -55,7 +60,7 @@
       <!-- 저장 / 취소 버튼 -->
       <div class="board-toolbar">
         <button type="submit" class="btn-submit">저장</button>
-        <NuxtLink to="/approval">
+        <NuxtLink to="/approval/step-template">
           <button type="button" class="btn-submit">목록으로</button>
         </NuxtLink>
       </div>
@@ -69,7 +74,6 @@ import type {
   ApprovalStepTemplate,
   EditSaveApprovalTemplatePayload,
   SaveApprovalTemplateInitialData,
-  SaveApprovalTemplatePayload,
 } from "~/modules/approval/step-template/types";
 import { fetchAllUsersByTeamId } from "~/modules/user/api";
 import type { CommonCode } from "~/modules/common-code/types";
@@ -159,7 +163,7 @@ async function onSubmit() {
       {
         method: "PATCH",
         body: payload,
-      }
+      },
     );
 
     if (result) {
@@ -176,7 +180,7 @@ onMounted(async () => {
 
     // 템플릿 상세 정보 가져오기
     const res = await $fetch<ApprovalStepTemplate>(
-      `http://localhost:8000/approval/step-template/${id}`
+      `http://localhost:8000/approval/step-template/${id}`,
     );
 
     // 팀 이름 초기화

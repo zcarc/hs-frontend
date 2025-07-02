@@ -26,7 +26,7 @@
         <NuxtLink :to="`edit/${id}`">
           <button type="button" class="btn-submit">수정</button>
         </NuxtLink>
-        <NuxtLink to="../step-template">
+        <NuxtLink to="/approval/step-template">
           <button type="button" class="btn-submit">목록으로</button>
         </NuxtLink>
       </div>
