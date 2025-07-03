@@ -76,7 +76,7 @@ import type { ApprovalDocumentPayload } from "~/modules/approval/types";
 import { fetchCommonCodeList } from "~/modules/common-code/api";
 
 const payload: ApprovalDocumentPayload = reactive({
-  templateId: "",
+  templateId: null,
   title: "",
   content: "",
   status: "",

@@ -16,7 +16,7 @@ export interface GetApprovalDocumentData {
 }
 
 export interface ApprovalDocumentPayload {
-  templateId: string;
+  templateId: number | null;
   title: string;
   content: string;
   status: string;
