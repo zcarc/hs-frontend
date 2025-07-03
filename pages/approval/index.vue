@@ -41,7 +41,7 @@
         </NuxtLink>
         <span class="col-author">{{ item.drafter.name }}</span>
         <span class="col-date">{{ formatDate(item.createdAt) }}</span>
-        <span class="col-author">{{ getStatusLabel(item.status) }}</span>
+        <span class="col-author">{{ item.status }}</span>
       </div>
     </div>
     <div v-else class="board-empty">전자결재 문서가 없습니다.</div>
@@ -51,12 +51,10 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  ApprovalDocument,
-  ApprovalDocumentStatusEnum,
-  GetApprovalDocumentData,
+import {
+  type ApprovalDocument,
+  type GetApprovalDocumentData,
 } from "~/modules/approval/types";
-import { ApprovalDocumentStatusLabel } from "~/modules/approval/constants";
 
 const auth = useAuthStore();
 
@@ -87,9 +85,9 @@ async function getData(page: number = 1, limit: number = 10) {
   }
 }
 
-function getStatusLabel(status: ApprovalDocumentStatusEnum) {
-  return ApprovalDocumentStatusLabel[status];
-}
+// function getStatusLabel(status: ApprovalDocumentStatusEnum) {
+//   return ApprovalDocumentStatusLabel[status];
+// }
 
 watchEffect(async () => {
   const res = await getData(page.value, meta.value.limit);
