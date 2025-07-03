@@ -38,7 +38,6 @@ const menuItems = [
   },
   { key: "mail", name: "메일", route: { path: "/mail" } },
   { key: "msg", name: "쪽지", route: { path: "/msg" } },
-  { key: "manage", name: "결재 관리", route: { path: "/manage" } },
   { key: "report", name: "보고", route: { path: "/report" } },
   { key: "settings", name: "설정", route: { path: "/settings" } },
 ];
