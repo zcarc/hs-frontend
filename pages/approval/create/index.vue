@@ -15,8 +15,8 @@
       <div class="form-row">
         <label class="form-label" for="template">결재선 템플릿</label>
         <select
-          v-model="selectedTemplateId"
-          :disabled="!selectedTemplateId"
+          v-model="payload.templateId"
+          :disabled="!payload.templateId"
           class="form-input"
         >
           <option v-for="tpl in templates" :value="tpl.id" :key="tpl.id">
@@ -79,7 +79,7 @@ const payload: ApprovalDocumentPayload = reactive({
   templateId: null,
   title: "",
   content: "",
-  status: "",
+  status: "draft",
 });
 
 // 결재선 로직들
@@ -87,7 +87,7 @@ const teams = ref<CommonCode[]>([]);
 const selectedTeamId = ref<number | null>(null);
 
 const templates = ref<ApprovalStepTemplate[]>([]);
-const selectedTemplateId = ref<number | null>(null);
+// const selectedTemplateId = ref<number | null>(null);
 
 const selectedTemplateApprovers = ref<User[]>([]);
 
@@ -137,24 +137,27 @@ watch(selectedTeamId, async (teamId) => {
     if (res && res.length) {
       console.log("res: ", res);
       templates.value = res;
-      selectedTemplateId.value = res[0].id;
+      payload.templateId = res[0].id;
     } else {
       throw new Error("템플릿이 존재하지 않습니다.");
     }
   } catch (error) {
     templates.value = [];
-    selectedTemplateId.value = null;
+    payload.templateId = null;
   }
 });
 
 // 결재자 목록 가져오기
-watch(selectedTemplateId, async (templateId) => {
-  if (templateId) {
-    selectedTemplateApprovers.value = await $fetch<User[]>(
-      `http://localhost:8000/approval/all/step-users/${templateId}`,
-    );
-  }
-});
+watch(
+  () => payload.templateId,
+  async (templateId) => {
+    if (templateId) {
+      selectedTemplateApprovers.value = await $fetch<User[]>(
+        `http://localhost:8000/approval/all/step-users/${templateId}`,
+      );
+    }
+  },
+);
 </script>
 
 <style scoped src="/assets/css/shared/pages/board/create.css"></style>

@@ -19,5 +19,5 @@ export interface ApprovalDocumentPayload {
   templateId: number | null;
   title: string;
   content: string;
-  status: string;
+  status: "draft" | "submitted" | "rejected" | "completed";
 }
