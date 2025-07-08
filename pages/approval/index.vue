@@ -22,31 +22,32 @@
       </template>
     </div>
 
-    <div class="approval-list-header">
-      <span class="col-no">번호</span>
-      <span class="text-left pl-2">제목</span>
-      <span class="col-author">상태</span>
-      <span class="col-author">기안자</span>
-      <span class="col-date">기안일</span>
-    </div>
-    <div v-if="approvalDocuments.length > 0" class="board-list">
-      <div
-        v-for="(item, index) in approvalDocuments"
-        :key="item.id"
-        class="board-list-row"
-      >
-        <span class="col-no">{{ no - index }}</span>
-        <NuxtLink :to="`/approval/${item.id}`">
-          <span class="col-title cursor-pointer">{{ item.title }}</span>
-        </NuxtLink>
-        <span class="col-author">{{ item.drafter.name }}</span>
-        <span class="col-date">{{ formatDate(item.createdAt) }}</span>
-        <span class="col-author">{{ item.status }}</span>
+    <template v-if="approvalDocuments.length">
+      <div class="approval-list-header">
+        <span class="col-no">번호</span>
+        <span class="text-left pl-2">제목</span>
+        <span class="col-author">상태</span>
+        <span class="col-author">기안자</span>
+        <span class="col-date">기안일</span>
       </div>
-    </div>
-    <div v-else class="board-empty">전자결재 문서가 없습니다.</div>
+      <div class="board-list">
+        <div
+          v-for="(item, index) in approvalDocuments"
+          :key="item.id"
+          class="board-list-row"
+        >
+          <span class="col-no">{{ no - index }}</span>
+          <NuxtLink :to="`/approval/${item.id}`">
+            <span class="col-title cursor-pointer">{{ item.title }}</span>
+          </NuxtLink>
+          <span class="col-author">{{ item.drafter.name }}</span>
+          <span class="col-date">{{ formatDate(item.createdAt) }}</span>
+          <span class="col-author">{{ item.status }}</span>
+        </div>
+      </div>
 
-    <CustomPagination class="mt-10" :limit="meta.limit" :total="meta.total" />
+      <CustomPagination class="mt-10" :limit="meta.limit" :total="meta.total" />
+    </template>
   </div>
 </template>
 
