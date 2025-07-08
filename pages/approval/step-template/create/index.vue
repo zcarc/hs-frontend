@@ -73,6 +73,8 @@ import { fetchAllUsersByTeamId } from "~/modules/user/api";
 import type { CommonCode } from "~/modules/common-code/types";
 import { fetchCommonCodeList } from "~/modules/common-code/api";
 
+const router = useRouter();
+
 const form: SaveApprovalTemplateInitialData = reactive({
   teamId: null,
   templateName: "",
@@ -154,6 +156,7 @@ async function onSubmit() {
 
     if (result) {
       alert("템플릿이 성공적으로 저장되었습니다.");
+      router.push("/approval/step-template");
     }
   } catch (error) {
     alert("템플릿 저장 중 오류가 발생했습니다.");
