@@ -1,6 +1,6 @@
 import { useAuthStore } from "~/stores/auth";
 
-export async function useAuthApi<T>(requestUrl: string, options: {}) {
+export async function useAuthApi<T>(requestUrl: string, options: {} = {}) {
   const auth = useAuthStore();
 
   try {
