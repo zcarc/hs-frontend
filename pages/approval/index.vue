@@ -17,7 +17,7 @@
       />
       <template v-if="auth.user">
         <NuxtLink to="/approval/create">
-          <Button>새 결재 작성</Button>
+          <Button>결재 작성</Button>
         </NuxtLink>
       </template>
     </div>
@@ -54,55 +54,50 @@
 </template>
 
 <script setup lang="ts">
-import {
-  type ApprovalDocument,
-  type GetApprovalDocumentData,
-} from "~/modules/approval/types";
+import { type GetApprovalDocumentData } from "~/modules/approval/types";
 
 const auth = useAuthStore();
-
-const approvalDocuments = ref<ApprovalDocument[]>([]);
-const meta = ref({ total: 0, page: 1, limit: 10 });
 const route = useRoute();
+
 const page = computed(() => Number(route.query.page) || 1);
+const limit = computed(() => 10);
+const search = ref("");
+const filterStatus = ref("all");
+
+const {
+  data: response,
+  pending: isLoading,
+  error,
+} = useFetch<GetApprovalDocumentData>("http://localhost:8000/approval", {
+  params: {
+    page,
+    limit,
+    search,
+    status: filterStatus,
+  },
+});
+
+console.log("response", response);
+
+const approvalDocuments = computed(
+  () => response.value?.approvalDocuments || [],
+);
+
+console.log("approvalDocuments", approvalDocuments);
+
+const meta = computed(
+  () => response.value?.meta || { total: 0, page: 1, limit: 10 },
+);
+
 const no = computed(
   () => meta.value.total - (page.value - 1) * meta.value.limit,
 );
 
-const search = ref("");
-const filterStatus = ref("all");
-
-const isLoading = ref<boolean>(false);
-
-async function fetchData(page: number = 1, limit: number = 10) {
-  try {
-    isLoading.value = true;
-    const res = await $fetch<GetApprovalDocumentData>(
-      "http://localhost:8000/approval",
-      {
-        params: {
-          page,
-          limit,
-        },
-      },
-    );
-    if (res && Array.isArray(res.approvalDocuments)) {
-      approvalDocuments.value = res.approvalDocuments;
-      meta.value.limit = res.meta.limit;
-    }
-  } catch (e) {
-    alert("목록 요청 실패");
-  } finally {
-    isLoading.value = false;
+watch(error, (newError) => {
+  if (newError) {
+    alert("목록 요청에 실패했습니다.");
+    console.error("Error fetching approval documents:", newError);
   }
-}
-
-onMounted(() => {
-  fetchData(page.value, meta.value.limit);
-});
-
-watch(page, async () => {
-  fetchData(page.value, meta.value.limit);
 });
 
 function formatDate(dateStr: string) {

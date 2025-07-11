@@ -19,76 +19,68 @@
       <span class="col-title">이름</span>
       <span class="col-author">작성자</span>
     </div>
-    <div v-if="templates.length > 0" class="board-list">
-      <div
-        v-for="(template, index) in templates"
-        :key="template.id"
-        class="board-list-row"
-      >
-        <span class="col-no"> {{ no - index }}</span>
-        <NuxtLink :to="`step-template/${template.id}`">
-          <span class="col-title cursor-pointer">{{ template.name }}</span>
-        </NuxtLink>
-        <span class="col-author">{{ template.creator.name }}</span>
-      </div>
+    <div v-if="!isLoading" class="board-list">
+      <template v-if="templates.length">
+        <div
+          v-for="(template, index) in templates"
+          :key="template.id"
+          class="board-list-row"
+        >
+          <span class="col-no"> {{ no - index }}</span>
+          <NuxtLink :to="`step-template/${template.id}`">
+            <span class="col-title cursor-pointer">{{ template.name }}</span>
+          </NuxtLink>
+          <span class="col-author">{{ template.creator.name }}</span>
+        </div>
+      </template>
+      <div v-else class="board-empty">템플릿이 없습니다.</div>
     </div>
-    <div v-else class="board-empty">템플릿이 없습니다.</div>
+
     <CustomPagination class="mt-10" :limit="meta.limit" :total="meta.total" />
   </div>
 </template>
 
 <script setup lang="ts">
-import type {
-  ApprovalStepTemplate,
-  ListApprovalTemplate,
-} from "~/modules/approval/step-template/types";
+import type { ListApprovalTemplate } from "~/modules/approval/step-template/types";
 
 const auth = useAuthStore();
+const route = useRoute();
 
-const templates = ref<ApprovalStepTemplate[]>([]);
-const meta = ref({
-  total: 0,
-  page: 1,
-  limit: 10,
+const search = ref("");
+const page = computed(() => Number(route.query.page) || 1);
+const limit = computed(() => 10);
+
+// useFetch를 사용하여 API 데이터를 가져옵니다.
+// page computed 값이 변경되면 자동으로 다시 데이터를 가져옵니다.
+const {
+  data: response,
+  pending: isLoading,
+  error,
+} = useFetch<ListApprovalTemplate>("http://localhost:8000/approval-templates", {
+  params: {
+    page,
+    limit,
+  },
 });
 
-const route = useRoute();
-const page = computed(() => Number(route.query.page) || 1);
+// response가 변경될 때 안전하게 templates와 meta를 추출하는 computed 속성
+const templates = computed(() => response.value?.templates || []);
+const meta = computed(
+  () => response.value?.meta || { total: 0, page: 1, limit: 10 },
+);
 
+// 게시물 번호를 계산하는 computed 속성
 const no = computed(
   () => meta.value.total - (page.value - 1) * meta.value.limit,
 );
 
-async function fetchAndSetData(pageNum: number, limitNum: number) {
-  try {
-    const res = await $fetch<ListApprovalTemplate>(
-      "http://localhost:8000/approval-templates",
-      {
-        params: {
-          page: pageNum,
-          limit: limitNum,
-        },
-      },
-    );
-    console.log("res: ", res);
-    if (res && Array.isArray(res.templates)) {
-      templates.value = res.templates;
-      meta.value = res.meta;
-    }
-  } catch (e) {
-    alert("목록 요청 실패");
+// 데이터 페칭 중 에러가 발생하면 알림을 표시합니다.
+watch(error, (newError) => {
+  if (newError) {
+    alert("목록 요청에 실패했습니다.");
+    console.error("Error fetching approval templates:", newError);
   }
-}
-
-onMounted(() => {
-  fetchAndSetData(page.value, meta.value.limit);
 });
-
-watch(page, (newPage) => {
-  fetchAndSetData(newPage, meta.value.limit);
-});
-
-const search = ref("");
 </script>
 
 <style scoped src="/modules/board/css/shared/index.css"></style>
