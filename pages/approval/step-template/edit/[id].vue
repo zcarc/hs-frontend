@@ -165,10 +165,11 @@ async function onSubmit() {
       {
         method: "PATCH",
         body: payload,
-      }
+        raw: true,
+      },
     );
 
-    if (result) {
+    if (result.status === 204) {
       alert("템플릿이 성공적으로 저장되었습니다.");
       router.push("/approval/step-template");
     }
@@ -183,7 +184,7 @@ onMounted(async () => {
 
     // 템플릿 상세 정보 가져오기
     const res = await $fetch<ApprovalStepTemplate>(
-      `http://localhost:8000/approval-templates/${id}`
+      `http://localhost:8000/approval-templates/${id}`,
     );
 
     // 팀 이름 초기화
