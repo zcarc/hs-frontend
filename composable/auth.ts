@@ -1,11 +1,16 @@
 import { useAuthStore } from "~/stores/auth";
 
-export async function useAuthApi<T>(requestUrl: string, options: {} = {}) {
+export async function useAuthApi<T>(
+  requestUrl: string,
+  options: { raw?: boolean } & Record<string, any> = {},
+) {
   const auth = useAuthStore();
+  const { raw, ...fetchOptions } = options;
 
   try {
-    return await $fetch<T>(requestUrl, {
-      ...options,
+    const fetcher = raw ? $fetch.raw : $fetch;
+    return await fetcher<T>(requestUrl, {
+      ...fetchOptions,
       credentials: "include",
     });
   } catch (e: any) {
