@@ -147,11 +147,11 @@ async function onSubmit() {
 
   try {
     const result = await useAuthApi(
-      "http://localhost:8000/approval/create/step-template",
+      "http://localhost:8000/approval-templates",
       {
         method: "POST",
         body: payload,
-      },
+      }
     );
 
     if (result) {
