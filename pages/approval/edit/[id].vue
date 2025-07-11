@@ -142,10 +142,7 @@ watch(selectedTeamId, async (teamId) => {
   if (!teamId) return;
   try {
     const res = await $fetch<ApprovalStepTemplate[]>(
-      "http://localhost:8000/approval/team/step-templates",
-      {
-        params: { teamId },
-      },
+      `http://localhost:8000/approval-templates/team/${teamId}`,
     );
     if (res && res.length) {
       templates.value = res;
@@ -167,7 +164,7 @@ watch(
   async (templateId) => {
     if (templateId) {
       selectedTemplateApprovers.value = await $fetch<User[]>(
-        `http://localhost:8000/approval/all/step-users/${templateId}`,
+        `http://localhost:8000/approval-templates/${templateId}/users`,
       );
     } else {
       selectedTemplateApprovers.value = [];
