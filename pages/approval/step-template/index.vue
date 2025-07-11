@@ -27,7 +27,7 @@
           class="board-list-row"
         >
           <span class="col-no"> {{ no - index }}</span>
-          <NuxtLink :to="`step-template/${template.id}`">
+          <NuxtLink :to="`${template.id}`">
             <span class="col-title cursor-pointer">{{ template.name }}</span>
           </NuxtLink>
           <span class="col-author">{{ template.creator.name }}</span>
