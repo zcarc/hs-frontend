@@ -22,7 +22,7 @@
       </template>
     </div>
 
-    <template v-if="approvalDocuments.length">
+    <template v-if="!isLoading">
       <div class="approval-list-header">
         <span class="col-no">번호</span>
         <span class="text-left pl-2">제목</span>
@@ -30,7 +30,7 @@
         <span class="col-author">기안자</span>
         <span class="col-date">기안일</span>
       </div>
-      <div class="board-list">
+      <div v-if="approvalDocuments.length" class="board-list">
         <div
           v-for="(item, index) in approvalDocuments"
           :key="item.id"
@@ -45,6 +45,8 @@
           <span class="col-author">{{ item.status }}</span>
         </div>
       </div>
+
+      <div v-else class="board-empty">결재문서가 없습니다.</div>
 
       <CustomPagination class="mt-10" :limit="meta.limit" :total="meta.total" />
     </template>
@@ -70,9 +72,12 @@ const no = computed(
 const search = ref("");
 const filterStatus = ref("all");
 
-async function getData(page: number = 1, limit: number = 10) {
+const isLoading = ref<boolean>(false);
+
+async function fetchData(page: number = 1, limit: number = 10) {
   try {
-    return await $fetch<GetApprovalDocumentData>(
+    isLoading.value = true;
+    const res = await $fetch<GetApprovalDocumentData>(
       "http://localhost:8000/approval",
       {
         params: {
@@ -81,21 +86,23 @@ async function getData(page: number = 1, limit: number = 10) {
         },
       },
     );
+    if (res && Array.isArray(res.approvalDocuments)) {
+      approvalDocuments.value = res.approvalDocuments;
+      meta.value.limit = res.meta.limit;
+    }
   } catch (e) {
     alert("목록 요청 실패");
+  } finally {
+    isLoading.value = false;
   }
 }
 
-// function getStatusLabel(status: ApprovalDocumentStatusEnum) {
-//   return ApprovalDocumentStatusLabel[status];
-// }
+onMounted(() => {
+  fetchData(page.value, meta.value.limit);
+});
 
-watchEffect(async () => {
-  const res = await getData(page.value, meta.value.limit);
-  if (res) {
-    approvalDocuments.value = res.approvalDocuments;
-    meta.value.limit = res.meta.limit;
-  }
+watch(page, async () => {
+  fetchData(page.value, meta.value.limit);
 });
 
 function formatDate(dateStr: string) {
