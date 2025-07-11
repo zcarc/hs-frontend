@@ -21,11 +21,14 @@
           </li>
         </ul>
       </div>
-      <!--      수정 / 목록-->
+      <!--      수정 / 삭제 / 목록-->
       <div class="board-toolbar">
         <NuxtLink :to="`edit/${id}`">
           <button type="button" class="btn-submit">수정</button>
         </NuxtLink>
+        <button type="button" class="btn-submit" @click="deleteTemplate">
+          삭제
+        </button>
         <NuxtLink to="/approval/step-template">
           <button type="button" class="btn-submit">목록으로</button>
         </NuxtLink>
@@ -38,8 +41,10 @@
 import type { ApprovalStepTemplate } from "~/modules/approval/step-template/types";
 import type { ApprovalStep } from "~/modules/approval/step/types";
 import type { Team } from "~/modules/team/types";
+import { useAuthApi } from "~/composable/auth";
 
 const route = useRoute();
+const router = useRouter();
 const id = route.params.id;
 
 const team = ref<Team | null>(null);
@@ -51,7 +56,10 @@ onMounted(async () => {
   try {
     isLoading.value = true;
     const res = await $fetch<ApprovalStepTemplate>(
-      `http://localhost:8000/approval/step-template/${id}`,
+      `http://localhost:8000/approval-templates/${id}`,
+      {
+        method: "GET",
+      },
     );
     console.log("res: ", res);
     if (res?.team) {
@@ -69,6 +77,25 @@ onMounted(async () => {
     isLoading.value = false;
   }
 });
+
+const deleteTemplate = async () => {
+  if (confirm("템플릿을 삭제하시겠습니까?")) {
+    try {
+      const res = await useAuthApi(
+        `http://localhost:8000/approval-templates/${id}`,
+        {
+          method: "DELETE",
+        },
+      );
+      if (res) {
+        alert("템플릿이 삭제되었습니다.");
+        await router.push("/approval/step-template");
+      }
+    } catch (e) {
+      alert("템플릿 삭제에 실패했습니다.");
+    }
+  }
+};
 </script>
 
 <style scoped src="~/modules/approval/step-template/css/nonlist-layout.css" />
