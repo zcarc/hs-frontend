@@ -56,41 +56,36 @@ const route = useRoute();
 const page = computed(() => Number(route.query.page) || 1);
 
 const no = computed(
-  () => meta.value.total - (page.value - 1) * meta.value.limit
+  () => meta.value.total - (page.value - 1) * meta.value.limit,
 );
 
-const res = await getData(page.value, meta.value.limit);
-
-if (res) {
-  templates.value = res.templates;
-  meta.value = res.meta;
-}
-
-async function getData(page: number = 1, limit: number = 10) {
+async function fetchAndSetData(pageNum: number, limitNum: number) {
   try {
-    return await $fetch<ListApprovalTemplate>(
-      "http://localhost:8000/approval/all/step-template",
+    const res = await $fetch<ListApprovalTemplate>(
+      "http://localhost:8000/approval-templates",
       {
         params: {
-          page,
-          limit,
+          page: pageNum,
+          limit: limitNum,
         },
-      }
+      },
     );
+    console.log("res: ", res);
+    if (res && Array.isArray(res.templates)) {
+      templates.value = res.templates;
+      meta.value = res.meta;
+    }
   } catch (e) {
     alert("목록 요청 실패");
   }
 }
 
-watch(page.value, async () => {
-  const res = await getData(page.value, meta.value.limit);
-  if (res) {
-    templates.value = res.templates;
-    // 아래처럼 프로퍼티만 각각 갱신
-    meta.value.total = res.meta.total;
-    meta.value.page = res.meta.page;
-    meta.value.limit = res.meta.limit;
-  }
+onMounted(() => {
+  fetchAndSetData(page.value, meta.value.limit);
+});
+
+watch(page, (newPage) => {
+  fetchAndSetData(newPage, meta.value.limit);
 });
 
 const search = ref("");
