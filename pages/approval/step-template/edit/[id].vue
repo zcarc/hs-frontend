@@ -80,6 +80,8 @@ import type { CommonCode } from "~/modules/common-code/types";
 import { fetchCommonCodeList } from "~/modules/common-code/api";
 
 const route = useRoute();
+const router = useRouter();
+
 const id = route.params.id;
 
 const form: SaveApprovalTemplateInitialData = reactive({
@@ -159,15 +161,16 @@ async function onSubmit() {
 
   try {
     const result = await useAuthApi(
-      "http://localhost:8000/approval/edit/step-template",
+      `http://localhost:8000/approval-templates/${id}`,
       {
         method: "PATCH",
         body: payload,
-      },
+      }
     );
 
     if (result) {
       alert("템플릿이 성공적으로 저장되었습니다.");
+      router.push("/approval/step-template");
     }
   } catch (error) {
     alert("템플릿 저장 중 오류가 발생했습니다.");
@@ -180,7 +183,7 @@ onMounted(async () => {
 
     // 템플릿 상세 정보 가져오기
     const res = await $fetch<ApprovalStepTemplate>(
-      `http://localhost:8000/approval/step-template/${id}`,
+      `http://localhost:8000/approval-templates/${id}`
     );
 
     // 팀 이름 초기화
