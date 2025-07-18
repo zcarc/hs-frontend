@@ -25,63 +25,61 @@
         <NuxtLink :to="`/board/${post.id}`">
           <span class="col-title cursor-pointer">{{ post.title }}</span>
         </NuxtLink>
-        <span class="col-author">{{ post.author.name }}</span>
+        <span class="col-author">{{ post.authorName }}</span>
       </div>
     </div>
     <div v-else class="board-empty">게시글이 없습니다.</div>
-    <CustomPagination class="mt-10" :limit="meta.limit" :total="meta.total" />
+    <CustomPagination class="mt-10" :limit="meta.size" :total="meta.totalElements" />
   </div>
 </template>
 
 <script setup lang="ts">
-import type { GetPostData, Post } from "~/modules/post/types";
+import type { PagedResponse, PostListResponse } from "~/modules/post/types";
 
 const auth = useAuthStore();
 
-const posts = ref<Post[]>([]);
+const posts = ref<PostListResponse[]>([]);
 const meta = ref({
-  total: 0,
-  page: 1,
-  limit: 10,
+  totalElements: 0,
+  number: 1,
+  size: 10,
+  totalPages: 1,
 });
 
 const route = useRoute();
 const page = computed(() => Number(route.query.page) || 1);
 
 const no = computed(
-  () => meta.value.total - (page.value - 1) * meta.value.limit
+  () => meta.value.totalElements - (page.value - 1) * meta.value.size
 );
 
-const res = await getData(page.value, meta.value.limit);
-
-if (res) {
-  posts.value = res.posts;
-  meta.value = res.meta;
+async function fetchData() {
+  const res = await getData(page.value, meta.value.size);
+  if (res) {
+    posts.value = res.content;
+    meta.value = {
+      totalElements: res.totalElements,
+      number: res.number + 1, // 백엔드는 0-based, 프론트는 1-based
+      size: res.size,
+      totalPages: res.totalPages,
+    };
+  }
 }
 
-async function getData(page: number = 1, limit: number = 10) {
+async function getData(page: number = 1, size: number = 10) {
   try {
-    return await $fetch<GetPostData>("http://localhost:8000/post", {
+    return await $fetch<PagedResponse<PostListResponse>>("/api/posts", {
       params: {
-        page,
-        limit,
+        page: page - 1, // 프론트는 1-based, 백엔드는 0-based
+        size,
       },
     });
   } catch (e) {
-    alert("목록 요청 실패");
+    console.error("목록 요청 실패:", e);
   }
 }
 
-watch(page.value, async () => {
-  const res = await getData(page.value, meta.value.limit);
-  if (res) {
-    posts.value = res.posts;
-    // 아래처럼 프로퍼티만 각각 갱신
-    meta.value.total = res.meta.total;
-    meta.value.page = res.meta.page;
-    meta.value.limit = res.meta.limit;
-  }
-});
+watch(page, fetchData, { immediate: true });
 
 const search = ref("");
 </script>
