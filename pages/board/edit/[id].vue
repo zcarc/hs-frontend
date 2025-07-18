@@ -36,8 +36,9 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthApi } from "~/composable/auth";
-import type { Post } from "~/modules/post/types";
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import type { PostResponse, PostUpdateRequest } from "~/modules/post/types";
 
 const route = useRoute();
 const router = useRouter();
@@ -51,12 +52,13 @@ const isLoading = ref<boolean>(false);
 onMounted(async () => {
   try {
     isLoading.value = true;
-    const res = await $fetch<Post>(
-      `http://localhost:8000/post/${route.params.id}`,
+    const res = await $fetch<PostResponse>(
+      `/api/posts/${route.params.id}`
     );
     title.value = res.title;
     content.value = res.content || "";
   } catch (e) {
+    console.error("게시글 조회 실패:", e);
     title.value = "";
     content.value = "";
   } finally {
@@ -70,18 +72,18 @@ async function submit() {
     return;
   }
 
-  const result = await useAuthApi(
-    `http://localhost:8000/post/${route.params.id}`,
-    {
+  try {
+    await $fetch(`/api/posts/${route.params.id}`, {
       method: "PATCH",
       body: {
         title: title.value,
         content: content.value,
-      },
-    },
-  );
-  if (result) {
+      } as PostUpdateRequest,
+    });
     await router.push("/board");
+  } catch (e) {
+    console.error("글 수정 실패:", e);
+    alert("글 수정에 실패했습니다.");
   }
 }
 </script>
