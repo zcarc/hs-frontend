@@ -34,7 +34,9 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthApi } from "~/composable/auth";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import type { PostCreateRequest } from "~/modules/post/types";
 
 const title = ref("");
 const content = ref("");
@@ -48,15 +50,18 @@ async function submit() {
     return;
   }
 
-  const result = await useAuthApi("http://localhost:8000/post", {
-    method: "POST",
-    body: {
-      title: title.value,
-      content: content.value,
-    },
-  });
-  if (result) {
+  try {
+    await $fetch("/api/posts", {
+      method: "POST",
+      body: {
+        title: title.value,
+        content: content.value,
+      } as PostCreateRequest,
+    });
     await router.push("/board");
+  } catch (e) {
+    console.error("글 작성 실패:", e);
+    alert("글 작성에 실패했습니다.");
   }
 }
 </script>
