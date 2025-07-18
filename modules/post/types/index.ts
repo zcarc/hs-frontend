@@ -1,19 +1,30 @@
-export interface GetPostData {
-  posts: Post[];
-  meta: Meta;
+export interface PagedResponse<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number;
 }
 
-export interface Post {
+export interface PostListResponse {
   id: number;
   title: string;
-  content: string | null;
-  author: {
-    name: string;
-  };
+  authorName: string;
 }
 
-export interface Meta {
-  total: number;
-  page: number;
-  limit: number;
+export interface PostResponse {
+  id: number;
+  title: string;
+  content: string;
+  authorName: string;
+}
+
+export interface PostCreateRequest {
+  title: string;
+  content: string;
+}
+
+export interface PostUpdateRequest {
+  title: string;
+  content: string;
 }
