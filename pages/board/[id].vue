@@ -31,30 +31,33 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
-import { useAuthApi } from "~/composable/auth";
-import type { Post } from "~/modules/post/types";
+import type { PostResponse } from "~/modules/post/types";
 
 const route = useRoute();
 const router = useRouter();
 
 const id = route.params.id;
-const post = ref<Post | null>(null);
+const post = ref<PostResponse | null>(null);
 
 async function remove() {
-  const result = await useAuthApi(`http://localhost:8000/post/${id}`, {
-    method: "DELETE",
-  });
-  if (result) {
+  try {
+    await $fetch(`/api/posts/${id}`, {
+      method: "DELETE",
+    });
     await router.push("/board");
+  } catch (e) {
+    console.error("삭제 실패:", e);
+    alert("삭제에 실패했습니다.");
   }
 }
 
 onMounted(async () => {
   try {
-    post.value = await $fetch(`http://localhost:8000/post/${id}`);
+    post.value = await $fetch<PostResponse>(`/api/posts/${id}`);
   } catch (e) {
+    console.error("게시글 조회 실패:", e);
     post.value = null;
   }
 });
