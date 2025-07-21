@@ -14,14 +14,11 @@ export const useAuthStore = defineStore("auth", {
   }),
   actions: {
     async login({ userId, password }: LoginPayload) {
-      const res: LoginResponse = await $fetch(
-        "http://localhost:8000/auth/login",
-        {
-          method: "POST",
-          body: { userId, password },
-          credentials: "include",
-        },
-      );
+      const res: LoginResponse = await $fetch("/api/auth/login", {
+        method: "POST",
+        body: { userId, password },
+        credentials: "include",
+      });
       this.user = { userId: res.userId, name: res.name };
       this.accessToken = res.accessToken;
       this.isLoading = false;
