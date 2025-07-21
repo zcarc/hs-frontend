@@ -34,23 +34,23 @@
       }}</span>
     </div>
 
-    <div>
-      <input v-model="email" placeholder="이메일" class="input" />
-      <span v-if="errors.email" class="text-red-500 text-sm">{{
-        errors.email
-      }}</span>
-    </div>
+    <!--    <div>-->
+    <!--      <input v-model="email" placeholder="이메일" class="input" />-->
+    <!--      <span v-if="errors.email" class="text-red-500 text-sm">{{-->
+    <!--        errors.email-->
+    <!--      }}</span>-->
+    <!--    </div>-->
 
-    <div>
-      <select v-model="teamId" class="board-toolbar-select w-full">
-        <option v-for="item in teamList" :value="item.id" :key="item.id">
-          {{ item.name }}
-        </option>
-      </select>
-      <span v-if="errors.teamId" class="text-red-500 text-sm">{{
-        errors.teamId
-      }}</span>
-    </div>
+    <!--    <div>-->
+    <!--      <select v-model="teamId" class="board-toolbar-select w-full">-->
+    <!--        <option v-for="item in teamList" :value="item.id" :key="item.id">-->
+    <!--          {{ item.name }}-->
+    <!--        </option>-->
+    <!--      </select>-->
+    <!--      <span v-if="errors.teamId" class="text-red-500 text-sm">{{-->
+    <!--        errors.teamId-->
+    <!--      }}</span>-->
+    <!--    </div>-->
 
     <div>
       <button
@@ -87,18 +87,18 @@ const signupSchema = z.object({
   name: z
     .string({ required_error: "이름을 입력하세요" })
     .min(1, "이름을 입력하세요"),
-  email: z
-    .string({ required_error: "이메일을 입력하세요" })
-    .email("올바른 이메일 형식이 아닙니다"),
-  teamId: z
-    .number({ required_error: "팀을 선택하세요" })
-    .min(1, "팀을 선택하세요"),
+  // email: z
+  //   .string({ required_error: "이메일을 입력하세요" })
+  //   .email("올바른 이메일 형식이 아닙니다"),
+  // teamId: z
+  //   .number({ required_error: "팀을 선택하세요" })
+  //   .min(1, "팀을 선택하세요"),
 });
 
 const router = useRouter();
 const errorMessage = ref("");
 
-const teamList = ref<CommonCode[]>([]);
+// const teamList = ref<CommonCode[]>([]);
 
 const { handleSubmit, errors } = useForm({
   validationSchema: toTypedSchema(signupSchema),
@@ -107,12 +107,12 @@ const { handleSubmit, errors } = useForm({
 const { value: userId } = useField("userId");
 const { value: password } = useField("password");
 const { value: name } = useField("name");
-const { value: email } = useField("email");
-const { value: teamId } = useField("teamId");
+// const { value: email } = useField("email");
+// const { value: teamId } = useField("teamId");
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    await axios.post("http://localhost:8000/auth/signup", values);
+    await axios.post("/api/auth/signup", values);
     await router.push("/");
   } catch (err: any) {
     const status = err.response?.status;
@@ -131,13 +131,13 @@ const onSubmit = handleSubmit(async (values) => {
   }
 });
 
-onMounted(async () => {
-  const teamCodeList = await fetchCommonCodeList("TEAM");
-  if (teamCodeList?.length) {
-    teamList.value = teamCodeList;
-    teamId.value = teamCodeList[0].id;
-  }
-});
+// onMounted(async () => {
+//   const teamCodeList = await fetchCommonCodeList("TEAM");
+//   if (teamCodeList?.length) {
+//     teamList.value = teamCodeList;
+//     teamId.value = teamCodeList[0].id;
+//   }
+// });
 </script>
 
 <style scoped>
