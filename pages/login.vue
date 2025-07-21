@@ -48,6 +48,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { z } from "zod";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 
 const loginSchema = z.object({
   userId: z
@@ -76,13 +77,13 @@ const onSubmit = handleSubmit(async (values) => {
       userId: values.userId,
       password: values.password,
     });
-    // await axios.post("http://localhost:8000/auth/login", values, {
+    // await axios.post("/api/auth/login", values, {
     //   withCredentials: true,
     // });
     await router.push("/");
   } catch (err: any) {
     const status = err.response?.status;
-    const message = err.response?._data?.message
+    const message = err.response?._data?.message;
 
     if (status === 404) {
       errorMessage.value = "페이지를 찾을 수 없습니다. (404)";
