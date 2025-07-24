@@ -34,12 +34,12 @@
       }}</span>
     </div>
 
-    <!--    <div>-->
-    <!--      <input v-model="email" placeholder="이메일" class="input" />-->
-    <!--      <span v-if="errors.email" class="text-red-500 text-sm">{{-->
-    <!--        errors.email-->
-    <!--      }}</span>-->
-    <!--    </div>-->
+    <div>
+      <input v-model="email" placeholder="이메일" class="input" />
+      <span v-if="errors.email" class="text-red-500 text-sm">{{
+        errors.email
+      }}</span>
+    </div>
 
     <!--    <div>-->
     <!--      <select v-model="teamId" class="board-toolbar-select w-full">-->
@@ -68,14 +68,12 @@
 </template>
 
 <script setup lang="ts">
-import { useForm, useField } from "vee-validate";
+import { useField, useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { z } from "zod";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import { fetchCommonCodeList } from "~/modules/common-code/api";
-import type { CommonCode } from "~/modules/common-code/types";
 
 const signupSchema = z.object({
   userId: z
@@ -87,9 +85,9 @@ const signupSchema = z.object({
   name: z
     .string({ required_error: "이름을 입력하세요" })
     .min(1, "이름을 입력하세요"),
-  // email: z
-  //   .string({ required_error: "이메일을 입력하세요" })
-  //   .email("올바른 이메일 형식이 아닙니다"),
+  email: z
+    .string({ required_error: "이메일을 입력하세요" })
+    .email("올바른 이메일 형식이 아닙니다"),
   // teamId: z
   //   .number({ required_error: "팀을 선택하세요" })
   //   .min(1, "팀을 선택하세요"),
@@ -107,7 +105,7 @@ const { handleSubmit, errors } = useForm({
 const { value: userId } = useField("userId");
 const { value: password } = useField("password");
 const { value: name } = useField("name");
-// const { value: email } = useField("email");
+const { value: email } = useField("email");
 // const { value: teamId } = useField("teamId");
 
 const onSubmit = handleSubmit(async (values) => {
