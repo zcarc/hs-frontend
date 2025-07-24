@@ -6,25 +6,18 @@ interface ResponseApprover {
   name: string;
 }
 
-// 결재선 템플릿에 포함된 팀 정보
-interface ResponseTeam {
-  commonCode: {
-    id: number;
-    name: string;
-  };
-}
-
-// 결재선 템플릿 정보
-interface ResponseStepTemplate {
+// 결재 상태 정보
+interface ResponseStatus {
+  code: string;
   name: string;
-  team: ResponseTeam;
 }
 
 // 각 결재 단계 정보
 interface ResponseApprovalStep {
   stepOrder: number;
   approver: ResponseApprover;
-  template: ResponseStepTemplate;
+  status: ResponseStatus;
+  comment: string | null;
 }
 
 // 문서 작성자 정보
@@ -34,18 +27,14 @@ interface ResponseDrafter {
 
 // 최종적으로 API를 통해 받는 결재 문서 상세 정보 타입
 export interface ResponseApprovalDocument {
-  // 기본 필드
   id: number;
   title: string;
   content: string | null;
-  drafterId: number;
-  statusId: number;
+  drafter: ResponseDrafter;
+  status: ResponseStatus;
+  approvalDocumentSteps: ResponseApprovalStep[];
   createdAt: Date;
   updatedAt: Date;
-
-  // include를 통해 추가된 중첩 객체 필드
-  drafter: ResponseDrafter;
-  approvalSteps: ResponseApprovalStep[];
 }
 
 export interface ApprovalDocument {

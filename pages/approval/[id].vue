@@ -1,31 +1,26 @@
 <template>
   <div class="board-container">
     <h1 class="board-title">결재서 상세</h1>
-    <form class="board-form" @submit.prevent>
-      <!-- 팀 이름 선택-->
+    <form v-if="document" class="board-form" @submit.prevent>
+      <!-- 팀 이름 표시 -->
       <div class="form-row">
-        <label class="form-label" for="approver">팀 선택</label>
-        <select id="team" v-model="selectedTeamId" class="form-input" disabled>
-          <option v-for="team in teams" :key="team.id" :value="team.id">
-            {{ team.name }}
-          </option>
-        </select>
+        <label class="form-label">팀</label>
+        <input :value="teamName" type="text" class="form-input" readonly />
       </div>
-      <!-- 결재선 템플릿 목록-->
+      <!-- 결재선 템플릿 이름 표시 -->
       <div class="form-row">
-        <label class="form-label" for="template">결재선 템플릿</label>
-        <select v-model="document.templateId" class="form-input" disabled>
-          <option v-if="document.template" :value="document.template.id">
-            {{ document.template.name }}
-          </option>
-        </select>
+        <label class="form-label">결재선 템플릿</label>
+        <input :value="templateName" type="text" class="form-input" readonly />
       </div>
-      <!-- 결재자 목록-->
+      <!-- 결재자 목록 표시 -->
       <div class="form-row">
         <label class="form-label">결재자 목록</label>
-        <ul v-if="approvers.length" class="approvers-preview">
-          <li v-for="(approver, index) in approvers" :key="approver.id">
-            {{ index + 1 }}차 결재자: {{ approver.name }}
+        <ul v-if="document.approvalDocumentSteps" class="approvers-preview">
+          <li
+            v-for="step in document.approvalDocumentSteps"
+            :key="step.stepOrder"
+          >
+            {{ step.stepOrder }}차 결재자: {{ step.approver.name }}
           </li>
         </ul>
       </div>
@@ -36,7 +31,6 @@
           v-model="document.title"
           type="text"
           class="form-input"
-          placeholder="제목을 입력하세요"
           readonly
         />
       </div>
@@ -47,7 +41,6 @@
           v-model="document.content"
           class="form-input"
           rows="8"
-          placeholder="내용을 입력하세요"
           readonly
         ></textarea>
       </div>
@@ -65,47 +58,42 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthApi } from "~/composable/auth";
-import type { User } from "~/modules/user/types";
-import type { CommonCode } from "~/modules/common-code/types";
-import type { ApprovalDocument } from "~/modules/approval/types";
-import { fetchCommonCodeList } from "~/modules/common-code/api";
+import type { ResponseApprovalDocument } from "~/modules/approval/types";
 
 const route = useRoute();
 const router = useRouter();
 const documentId = Number(route.params.id);
 
-const document = ref<Partial<ApprovalDocument>>({});
-const teams = ref<CommonCode[]>([]);
-const selectedTeamId = ref<number | null>(null);
-const approvers = ref<User[]>([]);
+const document = ref<ResponseApprovalDocument | null>(null);
+
+const teamName = computed(() => {
+  // if (document.value?.approvalSteps[0]?.template.team.commonCode.name) {
+  //   return document.value.approvalSteps[0].template.team.commonCode.name;
+  // }
+  return "팀 정보 없음";
+});
+
+const templateName = computed(() => {
+  // if (document.value?.approvalSteps[0]?.template.name) {
+  //   return document.value.approvalSteps[0].template.name;
+  // }
+  return "템플릿 정보 없음";
+});
 
 async function fetchDocument() {
   try {
-    const result = await useAuthApi<ApprovalDocument>(
-      `http://localhost:8000/approval/${documentId}`,
+    const result = await $fetch<ResponseApprovalDocument>(
+      `http://localhost:8000/approval/${documentId}`
     );
+    console.log("result ", result);
     if (result) {
       document.value = result;
-      selectedTeamId.value = result.teamId;
-      if (result.templateId) {
-        await fetchApprovers(result.templateId);
-      }
+    } else {
+      throw new Error("결재문서 에러");
     }
   } catch (error) {
     console.error("Failed to fetch approval document:", error);
     alert("결재 문서를 불러오는데 실패했습니다.");
-  }
-}
-
-async function fetchApprovers(templateId: number) {
-  try {
-    approvers.value = await $fetch<User[]>(
-      `http://localhost:8000/approval/all/step-users/${templateId}`,
-    );
-  } catch (error) {
-    console.error("Failed to fetch approvers:", error);
-    approvers.value = [];
   }
 }
 
@@ -114,7 +102,7 @@ async function deleteDocument() {
     return;
   }
   try {
-    await useAuthApi(`http://localhost:8000/approval/${documentId}`, {
+    await $fetch(`http://localhost:8000/approval/${documentId}`, {
       method: "DELETE",
     });
     alert("결재 문서가 삭제되었습니다.");
@@ -125,12 +113,8 @@ async function deleteDocument() {
   }
 }
 
-onMounted(async () => {
-  const teamResult = await fetchCommonCodeList("TEAM");
-  if (teamResult) {
-    teams.value = teamResult;
-  }
-  await fetchDocument();
+onMounted(() => {
+  fetchDocument();
 });
 </script>
 
