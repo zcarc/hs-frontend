@@ -29,59 +29,86 @@
       </div>
     </div>
     <div v-else class="board-empty">게시글이 없습니다.</div>
-    <CustomPagination class="mt-10" :limit="meta.size" :total="meta.totalElements" />
+    <CustomPagination
+      class="mt-10"
+      :limit="meta.size"
+      :total="meta.totalElements"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { PagedResponse, PostListResponse } from "~/modules/post/types";
 
+const search = ref("");
+
 const auth = useAuthStore();
 
 const posts = ref<PostListResponse[]>([]);
 const meta = ref({
   totalElements: 0,
-  number: 1,
-  size: 10,
   totalPages: 1,
+  size: 10,
 });
 
 const route = useRoute();
 const page = computed(() => Number(route.query.page) || 1);
 
 const no = computed(
-  () => meta.value.totalElements - (page.value - 1) * meta.value.size
+  () => meta.value.totalElements - (page.value - 1) * meta.value.size,
 );
 
-async function fetchData() {
-  const res = await getData(page.value, meta.value.size);
-  if (res) {
-    posts.value = res.content;
-    meta.value = {
-      totalElements: res.totalElements,
-      number: res.number + 1, // 백엔드는 0-based, 프론트는 1-based
-      size: res.size,
-      totalPages: res.totalPages,
-    };
-  }
-}
+// async function fetchData() {
+//   try {
+//     const res = await $fetch<PagedResponse<PostListResponse>>("/api/posts", {
+//       params: {
+//         page: page.value,
+//         size: meta.value.size,
+//       },
+//     });
+//
+//     if (res) {
+//       posts.value = res.list;
+//       meta.value = {
+//         totalElements: res.totalElements,
+//         number: res.number + 1,
+//         size: res.size,
+//         totalPages: res.totalPages,
+//       };
+//     }
+//   } catch (e) {
+//     console.error("목록 요청 실패:", e);
+//   }
+// }
 
-async function getData(page: number = 1, size: number = 10) {
-  try {
-    return await $fetch<PagedResponse<PostListResponse>>("/api/posts", {
+const { data, error } = await useAsyncData<PagedResponse<PostListResponse>>(
+  "post-list",
+  () =>
+    $fetch<PagedResponse<PostListResponse>>("/api/posts", {
       params: {
-        page: page - 1, // 프론트는 1-based, 백엔드는 0-based
-        size,
+        page: page.value,
+        size: 10,
       },
-    });
-  } catch (e) {
-    console.error("목록 요청 실패:", e);
-  }
+    }),
+  {
+    watch: [page],
+    // ✅ server: true 기본이므로 생략 (유니버설)
+    // ❌ definePageMeta({ ssr: true })도 생략 (기본값이므로 불필요)
+  },
+);
+
+if (data.value) {
+  posts.value = data.value.list;
+  meta.value = {
+    totalElements: data.value.totalElements,
+    totalPages: data.value.totalPages,
+    size: data.value.size,
+  };
 }
 
-watch(page, fetchData, { immediate: true });
-
-const search = ref("");
+if (error.value) {
+  console.log(error.value);
+}
 </script>
 
 <style scoped src="/modules/board/css/shared/index.css"></style>
