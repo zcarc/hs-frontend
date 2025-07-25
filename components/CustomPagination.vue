@@ -25,15 +25,13 @@
 const route = useRoute();
 const router = useRouter();
 
-const page = computed(() => Number(route.query.page || 1));
-const { limit, total } = defineProps<{ limit: number; total: number }>();
+const {page, limit, total} = defineProps<{ page: number; limit: number; total: number }>();
 
 const totalPages = computed(() => Math.ceil(total / limit));
 
 // 현재 페이지 기준으로 10개 버튼 보여주기 (ex. 1~10, 11~20)
 const pageNumbers = computed(() => {
-  const current = page.value;
-  let start = Math.max(current - 4, 1);
+  let start = Math.max(page - 4, 1);
   const end = Math.min(start + 9, totalPages.value);
   start = Math.max(end - 9, 1);
 
