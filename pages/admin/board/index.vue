@@ -10,15 +10,12 @@
       />
       <template v-if="auth.user">
         <Button @click="create100Posts" class="ml-2">게시글 100개 생성</Button>
-        <NuxtLink to="/board/create">
-          <Button>글쓰기</Button>
-        </NuxtLink>
       </template>
     </div>
     <div class="board-list-header">
       <span class="col-no">번호</span>
       <span class="col-title">제목</span>
-      <span class="col-author">작���자</span>
+      <span class="col-author">작성자</span>
     </div>
     <div v-if="posts.length > 0" class="board-list">
       <div v-for="(post, index) in posts" :key="post.id" class="board-list-row">
@@ -32,6 +29,7 @@
     <div v-else class="board-empty">게시글이 없습니다.</div>
     <CustomPagination
         class="mt-10"
+        :page="page"
         :limit="meta.size"
         :total="meta.totalElements"
     />
@@ -75,14 +73,20 @@ const {data, error, refresh: refreshPosts} = await useAsyncData<PagedResponse<Po
     },
 );
 
-if (data.value) {
-  posts.value = data.value.list;
-  meta.value = {
-    totalElements: data.value.totalElements,
-    totalPages: data.value.totalPages,
-    size: data.value.size,
-  };
-}
+watch(
+    data,
+    (newData) => {
+      if (newData) {
+        posts.value = newData.list;
+        meta.value = {
+          totalElements: newData.totalElements,
+          totalPages: newData.totalPages,
+          size: newData.size,
+        };
+      }
+    },
+    {immediate: true},
+);
 
 if (error.value) {
   console.log(error.value);
