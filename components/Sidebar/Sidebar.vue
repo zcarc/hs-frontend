@@ -27,6 +27,11 @@ const menuItems = [
     route: { path: "/board", query: { page: 1 } },
   },
   {
+    key: "admin-board",
+    name: "게시판 관리",
+    route: {path: "/admin/board", query: {page: 1}},
+  },
+  {
     key: "approval",
     name: "결재 목록",
     route: { path: "/approval", query: { page: 1 } },
